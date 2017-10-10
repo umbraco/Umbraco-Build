@@ -1,4 +1,5 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.IO;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Umbraco.Build.Tasks
@@ -17,6 +18,12 @@ namespace Umbraco.Build.Tasks
 
         public override bool Execute()
         {
+            if (!File.Exists(AssemblyFile))
+            {
+                Log.LogError($"Could not find file \"{AssemblyFile}\".");
+                return false;
+            }
+
             var assemblySourceVersion = new AssemblySourceVersion();
             var version = assemblySourceVersion.Set(AssemblyFile);
             Log.LogMessage(MessageImportance.Normal, $"Set source version on {AssemblyFile} to {version}.");
