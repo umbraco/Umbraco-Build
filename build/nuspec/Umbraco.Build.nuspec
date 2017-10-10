@@ -14,14 +14,18 @@
     <summary>Contains the Umbraco Build tools.</summary>
     <language>en-US</language>
     <tags>umbraco</tags>
-    <dependencies>
-      <dependency id="LibGit2Sharp" version="[0.24.0, 1.0.0)" />
-      <dependency id="Mono.Cecil" version="[0.9.6.4, 1.0.0.0)" />
-      <dependency id="System.ValueTuple" version="[4.4.0, 5.0.0)" />
-    </dependencies>
+    <dependencies />
   </metadata>
   <files>
     <file src="$Solution$\src\Umbraco.Build\bin\Release\Umbraco.Build.dll" target="lib\Umbraco.Build.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\LibGit2Sharp.dll" target="lib\LibGit2Sharp.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\lib\win32\x86\git2-15e1193.dll" target="lib\lib\win32\x86\git2-15e1193.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\lib\win32\x64\git2-15e1193.dll" target="lib\lib\win32\x64\git2-15e1193.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\Mono.Cecil.dll" target="lib\Mono.Cecil.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\System.ValueTuple.dll" target="lib\System.ValueTuple.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\Microsoft.Build.Framework.dll" target="lib\Microsoft.Build.Framework.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\Microsoft.Build.Utilities.Core.dll" target="lib\Microsoft.Build.Utilities.Core.dll" />
+
     <file src="$Solution$\ps\Utilities.ps1" target="ps\Utilities.ps1" />
     <file src="$Solution$\ps\Get-VisualStudio.ps1" target="ps\Get-VisualStudio.ps1" />
     <file src="$Solution$\ps\Get-UmbracoBuildEnv.ps1" target="ps\Get-UmbracoBuildEnv.ps1" />

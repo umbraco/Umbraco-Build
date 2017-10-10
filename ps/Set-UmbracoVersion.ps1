@@ -49,13 +49,6 @@ function Set-UmbracoVersion
   $release = "" + $semver.Major + "." + $semver.Minor + "." + $semver.Patch
   
   # edit files and set the proper versions and dates
-  Write-Host "Update UmbracoVersion.cs"
-  Replace-FileText "$($uenv.SolutionRoot)\src\Umbraco.Core\Configuration\UmbracoVersion.cs" `
-    "(\d+)\.(\d+)\.(\d+)(.(\d+))?" `
-    "$release" 
-  Replace-FileText "$($uenv.SolutionRoot)\src\Umbraco.Core\Configuration\UmbracoVersion.cs" `
-    "CurrentComment => `"(.+)`"" `
-    "CurrentComment => `"$($semver.PreRelease)`""
   Write-Host "Update SolutionInfo.cs"
   Replace-FileText "$($uenv.SolutionRoot)\src\SolutionInfo.cs" `
     "AssemblyFileVersion\(`"(.+)?`"\)" `
@@ -68,50 +61,5 @@ function Set-UmbracoVersion
     "AssemblyCopyright\(`"Copyright © Umbraco (\d{4})`"\)" `
     "AssemblyCopyright(`"Copyright © Umbraco $year`")"
    
-  # edit csproj and set IIS Express port number
-  # this is a raw copy of ReplaceIISExpressPortNumber.exe
-  # it probably can be achieved in a much nicer way - l8tr
-  $source = @"
-  using System;
-  using System.IO;
-  using System.Xml;
-  using System.Globalization;
-
-  namespace Umbraco
-  {
-    public static class PortUpdater
-    {
-      public static void Update(string path, string release)
-      {
-        XmlDocument xmlDocument = new XmlDocument();
-        string fullPath = Path.GetFullPath(path);
-        xmlDocument.Load(fullPath);
-        int result = 1;
-        int.TryParse(release.Replace(`".`", `"`"), out result);
-        while (result < 1024)
-          result *= 10;
-        XmlNode xmlNode1 = xmlDocument.GetElementsByTagName(`"IISUrl`").Item(0);
-        if (xmlNode1 != null)
-          xmlNode1.InnerText = `"http://localhost:`" + (object) result;
-        XmlNode xmlNode2 = xmlDocument.GetElementsByTagName(`"DevelopmentServerPort`").Item(0);
-        if (xmlNode2 != null)
-          xmlNode2.InnerText = result.ToString((IFormatProvider) CultureInfo.InvariantCulture);
-        xmlDocument.Save(fullPath);
-      }
-    }
-  }
-"@
-
-  $assem = (
-    "System.Xml",
-    "System.IO",
-    "System.Globalization"
-  )
-
-  Write-Host "Update Umbraco.Web.UI.csproj"
-  add-type -referencedAssemblies $assem -typeDefinition $source -language CSharp
-  $csproj = "$($uenv.SolutionRoot)\src\Umbraco.Web.UI\Umbraco.Web.UI.csproj"
-  [Umbraco.PortUpdater]::Update($csproj, $release)
-
   return $semver
 }
