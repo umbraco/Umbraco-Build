@@ -4,7 +4,7 @@ using Microsoft.Build.Utilities;
 namespace Umbraco.Build.Tasks
 {
     /*
-     *  <UsingTask TaskName="Umbraco.Build.Tasks.SetAssemblySourceVersion" AssemblyFile="$(SolutionDir)..\packages\Umbraco.Build\Umbraco.Build.dll" />
+     *  <UsingTask TaskName="Umbraco.Build.Tasks.SetAssemblySourceVersion" AssemblyFile="$(SolutionDir)..\packages\Umbraco.Build\lib\Umbraco.Build.dll" />
      *  <Target Name="AfterBuild">
      *    <SetAssemblySourceVersion AssemblyFile="$(ProjectDir)bin\$(Configuration)\MyDll.dll" />
      *  </Target>

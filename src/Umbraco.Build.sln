@@ -5,6 +5,33 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Build", "Umbraco.Build\Umbraco.Build.csproj", "{E6300054-F946-4B3A-9862-07D4B51293C0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{FDF9307D-D7A5-4160-BFC1-37BCFD2F8A97}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\build.ps1 = ..\build\build.ps1
+		SolutionInfo.cs = SolutionInfo.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuSpec", "NuSpec", "{802C4EDE-A1BE-4A86-B0A9-15E446215180}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\nuspec\Umbraco.Build.nuspec = ..\build\nuspec\Umbraco.Build.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{95E685EA-C3CB-4834-80B3-83D40FA8426D}"
+	ProjectSection(SolutionItems) = preProject
+		..\ps\Get-UmbracoBuildEnv.ps1 = ..\ps\Get-UmbracoBuildEnv.ps1
+		..\ps\Get-UmbracoVersion.ps1 = ..\ps\Get-UmbracoVersion.ps1
+		..\ps\Get-VisualStudio.ps1 = ..\ps\Get-VisualStudio.ps1
+		..\ps\Set-UmbracoVersion.ps1 = ..\ps\Set-UmbracoVersion.ps1
+		..\ps\Utilities.ps1 = ..\ps\Utilities.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{DDD72EDF-3B48-4112-84CC-4D576F453E7D}"
+	ProjectSection(SolutionItems) = preProject
+		..\BUILD.md = ..\BUILD.md
+		..\LICENSE.md = ..\LICENSE.md
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +45,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{802C4EDE-A1BE-4A86-B0A9-15E446215180} = {FDF9307D-D7A5-4160-BFC1-37BCFD2F8A97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E9C426FC-082D-4AA8-947F-6F4AC0C04867}

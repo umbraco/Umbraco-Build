@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata minClientVersion="3.4.4">
+    <id>Umbraco.Build</id>
+    <version>0.1.0</version>
+    <title>Umbraco Build</title>
+    <authors>Umbraco HQ</authors>
+    <owners>Umbraco HQ</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>http://umbraco.com/</projectUrl>
+    <iconUrl>http://umbraco.com/media/357769/100px_transparent.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Contains the Umbraco Build tools.</description>
+    <summary>Contains the Umbraco Build tools.</summary>
+    <language>en-US</language>
+    <tags>umbraco</tags>
+    <dependencies>
+      <dependency id="LibGit2Sharp" version="[0.24.0, 1.0.0)" />
+      <dependency id="Mono.Cecil" version="[0.9.6.4, 1.0.0.0)" />
+      <dependency id="System.ValueTuple" version="[4.4.0, 5.0.0)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\Umbraco.Build.dll" target="lib\Umbraco.Build.dll" />
+    <file src="$Solution$\ps\Utilities.ps1" target="ps\Utilities.ps1" />
+    <file src="$Solution$\ps\Get-VisualStudio.ps1" target="ps\Get-VisualStudio.ps1" />
+    <file src="$Solution$\ps\Get-UmbracoBuildEnv.ps1" target="ps\Get-UmbracoBuildEnv.ps1" />
+    <file src="$Solution$\ps\Get-UmbracoVersion.ps1" target="ps\Get-UmbracoVersion.ps1" />
+    <file src="$Solution$\ps\Set-UmbracoVersion.ps1" target="ps\Set-UmbracoVersion.ps1" />
+  </files>
+</package>

@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="AssemblySourceVersion.cs" />
     <Compile Include="Attributes\AssemblySourceVersionAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

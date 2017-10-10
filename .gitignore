@@ -1,3 +1,8 @@
 bin/
 obj/
 .vs/
+*.user
+build.out/
+build.tmp/
+build/temp/
+build/hooks/
