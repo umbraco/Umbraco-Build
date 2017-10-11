@@ -19,7 +19,7 @@ function Get-UmbracoBuildEnv
 
   # cache for 4 days
   $cache = 4
-  
+
   # ensure we have NuGet
   $nuget = "$scriptTemp\nuget.exe"
   if (-not $local)
@@ -41,7 +41,7 @@ function Get-UmbracoBuildEnv
     Write-Host "Failed to locate NuGet.exe"
     break
   }
-  
+
   # ensure we have 7-Zip
   $sevenZip = "$scriptTemp\7za.exe"
   if (-not $no7zip)
@@ -134,7 +134,7 @@ function Get-UmbracoBuildEnv
     Write-Error -Exception $_.Exception -Message "Failed to load $semver"
     break
   }
-  
+
   # ensure we have node
   $node = "$scriptTemp\node-v6.9.1-win-x86"
   if (-not $noNode)
@@ -148,7 +148,7 @@ function Get-UmbracoBuildEnv
         Invoke-WebRequest $source -OutFile "$scriptTemp\node-v6.9.1-win-x86.7z"
         if (-not $?) { Write-Host "Abort" ; break }
         &$sevenZip x "$scriptTemp\node-v6.9.1-win-x86.7z" -o"$scriptTemp" -aos > $nul
-        Remove-File "$scriptTemp\node-v6.9.1-win-x86.7z"    
+        Remove-File "$scriptTemp\node-v6.9.1-win-x86.7z"
       }
     }
     elseif (-not (test-path $node))
@@ -157,7 +157,7 @@ function Get-UmbracoBuildEnv
       break
     }
   }
-    
+
   # find visual studio
   # will not work on VSO but VSO does not need it
   $vsPath = ""
@@ -178,12 +178,12 @@ function Get-UmbracoBuildEnv
     elseif ($vsMajor -eq 14) {
       $msBuild = "c:\Program Files (x86)\MSBuild\$vsMajor\Bin"
     }
-    else 
+    else
     {
       $msBuild = $null
     }
   }
- 
+
   $vs = $null
   if ($msBuild)
   {
@@ -193,9 +193,9 @@ function Get-UmbracoBuildEnv
     $vs | add-member -memberType NoteProperty -name Minor -value $vsMinor
     $vs | add-member -memberType NoteProperty -name MsBuild -value "$msBuild\MsBuild.exe"
   }
-  
+
   $solutionRoot = [System.IO.Path]::GetFullPath("$scriptRoot\..")
-  
+
   $uenv = new-object -typeName PsObject
   $uenv | add-member -memberType NoteProperty -name SolutionRoot -value $solutionRoot
   $uenv | add-member -memberType NoteProperty -name VisualStudio -value $vs
@@ -205,6 +205,6 @@ function Get-UmbracoBuildEnv
   $uenv | add-member -memberType NoteProperty -name Semver -value $semver
   $uenv | add-member -memberType NoteProperty -name NodePath -value $node
   $uenv | add-member -memberType NoteProperty -name Local -value $local
-  
+
   return $uenv
 }

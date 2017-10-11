@@ -4,7 +4,11 @@
 #
 function Get-UmbracoVersion
 {  
-  $uenv = Get-UmbracoBuildEnv
+  param (
+    $uenv
+  )
+
+  if ($uenv -eq $null) { $uenv = Get-UmbracoBuildEnv }
   
   # parse SolutionInfo and retrieve the version string
   $filepath = "$($uenv.SolutionRoot)\src\SolutionInfo.cs"
