@@ -1,28 +1,27 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using LibGit2Sharp;
-using Mono.Cecil;
-using Umbraco.Build.Attributes;
+﻿//using System;
+//using System.IO;
+//using System.Linq;
+//using System.Reflection;
+//using LibGit2Sharp;
+//using Mono.Cecil;
+//using Vestris.ResourceLib;
 
 namespace Umbraco.Build
 {
+    // keeping this around for info - does not work
+    //
+    // requires NuGet for
+    // - LibGit2Sharp
+    // - Mono.Cecil
+    // - System.ValueTuple
+    // - Vestris.ResourceLib (maybe)
+
+    /*
     public class AssemblySourceVersion
     {
-        public string Get(string filename)
+        public AssemblySourceVersion()
         {
-            var asmPath = Path.GetFullPath(Path.IsPathRooted(filename) ? filename : Path.Combine(Directory.GetCurrentDirectory(), filename));
-            var asm = Assembly.ReflectionOnlyLoadFrom(asmPath);
-            var attributeTypeName = typeof(AssemblySourceVersionAttribute).FullName;
-            var attrs = asm.GetCustomAttributesData().Where(x => x.AttributeType.FullName == attributeTypeName).ToArray();
-            if (attrs.Length > 1)
-                throw new Exception("panic: multiple AssemblySourceVersionAttribute attributes.");
-            if (attrs.Length == 0) return "00000000";
-
-            var version = (string) attrs[0].ConstructorArguments[0].Value;
-            var hasLocalChanges = (bool) attrs[0].ConstructorArguments[1].Value;
-            return new AssemblySourceVersionAttribute(version, hasLocalChanges).ToString();
+            AssemblyResolver.EnsureInitialized();
         }
 
         public string Set(string filename)
@@ -31,27 +30,57 @@ namespace Umbraco.Build
             var gitPath = Path.GetDirectoryName(Path.GetFullPath(Path.IsPathRooted(filename) ? filename : Path.Combine(Directory.GetCurrentDirectory(), filename)));
             (var version, var hasLocalChanges) = GetGitVersion(gitPath);
 
+            if (version == null)
+                return string.Empty;
+
+            var versionString = version + (hasLocalChanges ? "+" : "");
+
             // get assembly and module
             var assembly = AssemblyDefinition.ReadAssembly(filename);
             var module = assembly.MainModule;
 
-            // remove existing attributes, if any
-            var attributeTypeName = typeof(AssemblySourceVersionAttribute).FullName;
+            // get existing attributes, if any
+            var attributeTypeName = typeof(AssemblyInformationalVersionAttribute).FullName;
             var existingAttributes = assembly.CustomAttributes.Where(x => x.AttributeType.FullName == attributeTypeName).ToList();
-            foreach (var existingAttribute in existingAttributes)
-                assembly.CustomAttributes.Remove(existingAttribute);
+            var existingAttribute = existingAttributes.FirstOrDefault();
+            foreach (var existing in existingAttributes)
+                assembly.CustomAttributes.Remove(existing);
+
+            var existingVersion = existingAttribute?.ConstructorArguments[0].Value.ToString().Trim();
+            if (existingVersion != null)
+            {
+                var pos = existingVersion.IndexOf(' ');
+                if (pos > 0) existingVersion = existingVersion.Substring(0, pos - 1);
+            }
+
+            var newVersion = existingVersion
+                             + (existingVersion == null ? "" : " ")
+                             + versionString;
 
             // create and add the new attribute
-            var ctor = typeof(AssemblySourceVersionAttribute).GetConstructor(new[] { typeof(string), typeof(bool) });
+            var ctor = typeof(AssemblyInformationalVersionAttribute).GetConstructor(new[] { typeof(string) });
             var attribute = new CustomAttribute(module.Import(ctor));
-            attribute.ConstructorArguments.Add(new CustomAttributeArgument(module.TypeSystem.String, version));
-            attribute.ConstructorArguments.Add(new CustomAttributeArgument(module.TypeSystem.Boolean, hasLocalChanges));
+            attribute.ConstructorArguments.Add(new CustomAttributeArgument(module.TypeSystem.String, newVersion));
             assembly.CustomAttributes.Add(attribute);
 
             // write the assembly
             assembly.Write(filename);
 
-            return new AssemblySourceVersionAttribute(version, hasLocalChanges).ToString();
+            // still, not enough, 'cos it's not modifying the unmanaged
+            // PE VERSIONINFO resource ... so need to do it here
+            //
+            // closet would be ResourceLib which cannot deal with stings
+            // in product version (wtf?!) => give up for now
+            using (var info = new ResourceInfo())
+            {
+                info.Load(filename);
+                var resourceId = new ResourceId(Kernel32.ResourceTypes.RT_VERSION);
+                var versionResource = info.Resources[resourceId];
+
+            }
+
+
+            return versionString;
         }
 
         private static (string, bool) GetGitVersion(string path)
@@ -60,7 +89,11 @@ namespace Umbraco.Build
                 path = Path.GetDirectoryName(path);
 
             if (path == null)
-                return ("00000000", false);
+            {
+                var debug = Environment.GetEnvironmentVariable("UMBRACO_BUILD_DEBUG") == "1";
+                if (debug) Console.WriteLine("Could not locate .git directory.");
+                return (null, false);
+            }
 
             try
             {
@@ -78,8 +111,11 @@ namespace Umbraco.Build
             }
             catch (RepositoryNotFoundException)
             {
-                return ("00000000", false);
+                var debug = Environment.GetEnvironmentVariable("UMBRACO_BUILD_DEBUG") == "1";
+                if (debug) Console.WriteLine("RepositoryNotFoundException.");
+                return (null, false);
             }
         }
     }
+    */
 }

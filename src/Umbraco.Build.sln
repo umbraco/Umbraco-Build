@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", 
 		..\ps\Get-UmbracoVersion.ps1 = ..\ps\Get-UmbracoVersion.ps1
 		..\ps\Get-VisualStudio.ps1 = ..\ps\Get-VisualStudio.ps1
 		..\ps\Set-UmbracoVersion.ps1 = ..\ps\Set-UmbracoVersion.ps1
+		..\ps\SetClear-GitVersion.ps1 = ..\ps\SetClear-GitVersion.ps1
 		..\ps\Utilities.ps1 = ..\ps\Utilities.ps1
 	EndProjectSection
 EndProject

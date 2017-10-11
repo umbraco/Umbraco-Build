@@ -10,7 +10,11 @@ function Get-UmbracoVersion
   $filepath = "$($uenv.SolutionRoot)\src\SolutionInfo.cs"
   $text = [System.IO.File]::ReadAllText($filepath)
   $match = [System.Text.RegularExpressions.Regex]::Matches($text, "AssemblyInformationalVersion\(`"(.+)?`"\)")
-  $version = $match.Groups[1]
+  $version = $match.Groups[1].ToString()
+
+  # clear
+  $pos = $version.IndexOf(' ')
+  if ($pos -gt 0) { $version = $version.Substring(0, $pos) }
 
   # semver-parse the version string
   $semver = [SemVer.SemVersion]::Parse($version)

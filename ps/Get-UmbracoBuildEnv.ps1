@@ -5,73 +5,124 @@
 #
 function Get-UmbracoBuildEnv
 {
-  # cache for two days
-  $cache = 2
+  param (
+    # run local - don't download, assume everything is ready
+    [Parameter(Mandatory=$false)]
+    [switch] $local = $false,
+
+    # disable what we don't need
+    [Parameter(Mandatory=$false)]
+    [switch] $no7zip = $false,
+    [Parameter(Mandatory=$false)]
+    [switch] $noNode = $false
+  )
+
+  # cache for 4 days
+  $cache = 4
   
   # ensure we have NuGet
   $nuget = "$scriptTemp\nuget.exe"
-  $source = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
-  if ((test-path $nuget) -and ((ls $nuget).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
+  if (-not $local)
   {
-    Remove-File $nuget
+    $source = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
+    if ((test-path $nuget) -and ((ls $nuget).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
+    {
+      Remove-File $nuget
+    }
+    if (-not (test-path $nuget))
+    {
+      Write-Host "Download NuGet..."
+      Invoke-WebRequest $source -OutFile $nuget
+      if (-not $?) { Write-Host "Abort" ; break }
+    }
   }
-  if (-not (test-path $nuget))
+  elseif (-not (test-path $nuget))
   {
-    Write-Host "Download NuGet..."
-    Invoke-WebRequest $source -OutFile $nuget
+    Write-Host "Failed to locate NuGet.exe"
+    break
   }
   
   # ensure we have 7-Zip
   $sevenZip = "$scriptTemp\7za.exe"
-  if ((test-path $sevenZip) -and ((ls $sevenZip).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
+  if (-not $no7zip)
   {
-    Remove-File $sevenZip
+    if (-not $local)
+    {
+      if ((test-path $sevenZip) -and ((ls $sevenZip).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
+      {
+        Remove-File $sevenZip
+      }
+      if (-not (test-path $sevenZip))
+      {
+        Write-Host "Download 7-Zip..."
+        &$nuget install 7-Zip.CommandLine -OutputDirectory $scriptTemp -Verbosity quiet
+        if (-not $?) { Write-Host "Abort" ; break }
+        $dir = ls "$scriptTemp\7-Zip.CommandLine.*" | sort -property Name -descending | select -first 1
+        $file = ls -path "$dir" -name 7za.exe -recurse
+        mv "$dir\$file" $sevenZip
+        Remove-Directory $dir
+      }
+    }
+    elseif (-not (test-path $sevenZip))
+    {
+      Write-Host "Failed to locate 7za.exe"
+      break
+    }
   }
-  if (-not (test-path $sevenZip))
-  {
-    Write-Host "Download 7-Zip..."
-    &$nuget install 7-Zip.CommandLine -OutputDirectory $scriptTemp -Verbosity quiet
-    $dir = ls "$scriptTemp\7-Zip.CommandLine.*" | sort -property Name -descending | select -first 1
-    $file = ls -path "$dir" -name 7za.exe -recurse
-    mv "$dir\$file" $sevenZip
-    Remove-Directory $dir
-  }
-  
+
   # ensure we have vswhere
   $vswhere = "$scriptTemp\vswhere.exe"
-  if ((test-path $vswhere) -and ((ls $vswhere).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
+  if (-not $local)
   {
-    Remove-File $vswhere
+    if ((test-path $vswhere) -and ((ls $vswhere).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
+    {
+      Remove-File $vswhere
+    }
+    if (-not (test-path $vswhere))
+    {
+      Write-Host "Download VsWhere..."
+      &$nuget install vswhere -OutputDirectory $scriptTemp -Verbosity quiet
+      if (-not $?) { Write-Host "Abort" ; break }
+      $dir = ls "$scriptTemp\vswhere.*" | sort -property Name -descending | select -first 1
+      $file = ls -path "$dir" -name vswhere.exe -recurse
+      mv "$dir\$file" $vswhere
+      Remove-Directory $dir
+    }
   }
-  if (-not (test-path $vswhere))
+  elseif (-not (test-path $vswhere))
   {
-    Write-Host "Download VsWhere..."
-    &$nuget install vswhere -OutputDirectory $scriptTemp -Verbosity quiet
-    $dir = ls "$scriptTemp\vswhere.*" | sort -property Name -descending | select -first 1
-    $file = ls -path "$dir" -name vswhere.exe -recurse
-    mv "$dir\$file" $vswhere
-    Remove-Directory $dir
+    Write-Host "Failed to locate VsWhere.exe"
+    break
   }
-  
+
+
   # ensure we have semver
   $semver = "$scriptTemp\Semver.dll"
-  if ((test-path $semver) -and ((ls $semver).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
+  if (-not $local)
   {
-    Remove-File $semver
-  }
-  if (-not (test-path $semver))
-  {
-    Write-Host "Download Semver..."
-    &$nuget install semver -OutputDirectory $scriptTemp -Verbosity quiet
-    $dir = ls "$scriptTemp\semver.*" | sort -property Name -descending | select -first 1
-    $file = "$dir\lib\net452\Semver.dll"
-    if (-not (test-path $file))
+    if ((test-path $semver) -and ((ls $semver).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
     {
-      Write-Error "Failed to file $file"
-      return
+      Remove-File $semver
     }
-    mv "$file" $semver
-    Remove-Directory $dir
+    if (-not (test-path $semver))
+    {
+      Write-Host "Download Semver..."
+      &$nuget install semver -OutputDirectory $scriptTemp -Verbosity quiet
+      $dir = ls "$scriptTemp\semver.*" | sort -property Name -descending | select -first 1
+      $file = "$dir\lib\net452\Semver.dll"
+      if (-not (test-path $file))
+      {
+        Write-Error "Failed to file $file"
+        break
+      }
+      mv "$file" $semver
+      Remove-Directory $dir
+    }
+  }
+  elseif (-not (test-path $semver))
+  {
+    Write-Host "Failed to locate Semver.dll"
+    break
   }
 
   try
@@ -86,41 +137,27 @@ function Get-UmbracoBuildEnv
   
   # ensure we have node
   $node = "$scriptTemp\node-v6.9.1-win-x86"
-  $source = "http://nodejs.org/dist/v6.9.1/node-v6.9.1-win-x86.7z"
-  if (-not (test-path $node))
+  if (-not $noNode)
   {
-    Write-Host "Download Node..."
-    Invoke-WebRequest $source -OutFile "$scriptTemp\node-v6.9.1-win-x86.7z"
-    &$sevenZip x "$scriptTemp\node-v6.9.1-win-x86.7z" -o"$scriptTemp" -aos > $nul
-    Remove-File "$scriptTemp\node-v6.9.1-win-x86.7z"    
+    if (-not $local)
+    {
+      $source = "http://nodejs.org/dist/v6.9.1/node-v6.9.1-win-x86.7z"
+      if (-not (test-path $node))
+      {
+        Write-Host "Download Node..."
+        Invoke-WebRequest $source -OutFile "$scriptTemp\node-v6.9.1-win-x86.7z"
+        if (-not $?) { Write-Host "Abort" ; break }
+        &$sevenZip x "$scriptTemp\node-v6.9.1-win-x86.7z" -o"$scriptTemp" -aos > $nul
+        Remove-File "$scriptTemp\node-v6.9.1-win-x86.7z"    
+      }
+    }
+    elseif (-not (test-path $node))
+    {
+      Write-Host "Failed to locate Node"
+      break
+    }
   }
-  
-  # note: why? node already brings everything we need!
-  ## ensure we have npm
-  #$npm = "$scriptTemp\npm.*"
-  #$getNpm = $true
-  #if (test-path $npm)
-  #{
-  #  $getNpm = $false
-  #  $tmpNpm = ls "$scriptTemp\npm.*" | sort -property Name -descending | select -first 1
-  #  if ($tmpNpm.CreationTime -lt [DateTime]::Now.AddDays(-$cache))
-  #  {
-  #    $getNpm = $true
-  #  }
-  #  else
-  #  {
-  #    $npm = $tmpNpm.ToString()
-  #  }
-  #}
-  #if ($getNpm)
-  #{
-  #  Write-Host "Download Npm..."
-  #  &$nuget install npm -OutputDirectory $scriptTemp -Verbosity quiet
-  #  $npm = ls "$scriptTemp\npm.*" | sort -property Name -descending | select -first 1
-  #  $npm.CreationTime = [DateTime]::Now
-  #  $npm = $npm.ToString()
-  #}
-  
+    
   # find visual studio
   # will not work on VSO but VSO does not need it
   $vsPath = ""
@@ -167,7 +204,7 @@ function Get-UmbracoBuildEnv
   $uenv | add-member -memberType NoteProperty -name VsWhere -value $vswhere
   $uenv | add-member -memberType NoteProperty -name Semver -value $semver
   $uenv | add-member -memberType NoteProperty -name NodePath -value $node
-  #$uenv | add-member -memberType NoteProperty -name NpmPath -value $npm
+  $uenv | add-member -memberType NoteProperty -name Local -value $local
   
   return $uenv
 }

@@ -13,9 +13,9 @@ function Set-UmbracoVersion
     [string]
     $version
   )
-  
+
   $uenv = Get-UmbracoBuildEnv
-  
+
   try
   {
     [Reflection.Assembly]::LoadFile($uenv.Semver) > $null
@@ -25,7 +25,7 @@ function Set-UmbracoVersion
     Write-Error "Failed to load $uenv.Semver"
     break
   }
-  
+
   # validate input
   $ok = [Regex]::Match($version, "^[0-9]+\.[0-9]+\.[0-9]+(\-[a-z0-9\.]+)?(\+[0-9]+)?$")
   if (-not $ok.Success)
@@ -44,22 +44,22 @@ function Set-UmbracoVersion
     Write-Error "Invalid version $version"
     break
   }
-  
+
   #
   $release = "" + $semver.Major + "." + $semver.Minor + "." + $semver.Patch
-  
+
   # edit files and set the proper versions and dates
   Write-Host "Update SolutionInfo.cs"
   Replace-FileText "$($uenv.SolutionRoot)\src\SolutionInfo.cs" `
-    "AssemblyFileVersion\(`"(.+)?`"\)" `
+    "AssemblyFileVersion\(`".+`"\)" `
     "AssemblyFileVersion(`"$release`")"
   Replace-FileText "$($uenv.SolutionRoot)\src\SolutionInfo.cs" `
-    "AssemblyInformationalVersion\(`"(.+)?`"\)" `
+    "AssemblyInformationalVersion\(`".+`"\)" `
     "AssemblyInformationalVersion(`"$semver`")"
   $year = [System.DateTime]::Now.ToString("yyyy")
   Replace-FileText "$($uenv.SolutionRoot)\src\SolutionInfo.cs" `
     "AssemblyCopyright\(`"Copyright © Umbraco (\d{4})`"\)" `
     "AssemblyCopyright(`"Copyright © Umbraco $year`")"
-   
+
   return $semver
 }
