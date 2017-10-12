@@ -44,7 +44,8 @@
   $ubuildPath = [System.IO.Path]::GetFullPath("$scriptRoot\..")
 
   # boot the buildsystem
-  . "$ubuildPath\ps\Boot.ps1"
+  # this creates $global:ubuild
+  &"$ubuildPath\ps\Boot.ps1"
   $ubuild.Boot($ubuildPath, $ubuildPath, @{ Local = $local; With7Zip = $false; WithNode = $false }, $true)
   if (-not $?) { Write-Host "Abort" ; break }
 
@@ -95,12 +96,10 @@
   if (-not $?) { Write-Host "Abort" ; break }
 
   # run hook
-  $hook = "$($ubuild.SolutionRoot)\build\hooks\Post-Package-NuGet.ps1"
-  if (Test-Path -Path $hook)
+  if ($ubuild.PSObject.Methods.Name -match "PostPackageNuGet")
   {
-    Write-Host "Run Post-Package-NuGet hook"
-    . "$hook" # define Post-Package-Nuget
-    Post-Package-NuGet
+    Write-Host "Run PostPackageNuGet hook"
+    $ubuild.PostPackageNuGet()
     if (-not $?) { Write-Host "Abort" ; break }
   }
 
