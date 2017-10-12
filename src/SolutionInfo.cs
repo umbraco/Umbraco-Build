@@ -17,4 +17,4 @@ using System.Resources;
 
 // these are FYI and changed automatically
 [assembly: AssemblyFileVersion("0.1.0")]
-[assembly: AssemblyInformationalVersion("0.1.0-alpha.27")]
+[assembly: AssemblyInformationalVersion("0.1.0-alpha.28")]

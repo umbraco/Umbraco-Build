@@ -34,17 +34,17 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
   }
 
   # source the scripts
-  . "$($this.BuildPath)\ps\GetUmbracoBuildEnv.ps1"
+  "$($this.BuildPath)\ps\GetUmbracoBuildEnv.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
-  . "$($this.BuildPath)\ps\GetUmbracoVersion.ps1"
+  "$($this.BuildPath)\ps\GetUmbracoVersion.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
-  . "$($this.BuildPath)\ps\SetUmbracoVersion.ps1"
+  "$($this.BuildPath)\ps\SetUmbracoVersion.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
-  . "$($this.BuildPath)\ps\SetClearGitVersion.ps1"
+  "$($this.BuildPath)\ps\SetClearGitVersion.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
-  . "$($this.BuildPath)\ps\VerifyNuGet.ps1"
+  "$($this.BuildPath)\ps\VerifyNuGet.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
-  . "$($this.BuildPath)\ps\Utilities.ps1"
+  "$($this.BuildPath)\ps\Utilities.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
 
   # ensure we have empty build.tmp and build.out folders
