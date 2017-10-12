@@ -17,8 +17,9 @@
     <dependencies />
   </metadata>
   <files>
-    <!--
     <file src="$Solution$\src\Umbraco.Build\bin\Release\Umbraco.Build.dll" target="lib\Umbraco.Build.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\Semver.dll" target="lib\Semver.dll" />
+    <!--
     <file src="$Solution$\src\Umbraco.Build\bin\Release\LibGit2Sharp.dll" target="lib\LibGit2Sharp.dll" />
     <file src="$Solution$\src\Umbraco.Build\bin\Release\lib\win32\x86\git2-15e1193.dll" target="lib\lib\win32\x86\git2-15e1193.dll" />
     <file src="$Solution$\src\Umbraco.Build\bin\Release\lib\win32\x64\git2-15e1193.dll" target="lib\lib\win32\x64\git2-15e1193.dll" />
@@ -28,11 +29,12 @@
     <file src="$Solution$\src\Umbraco.Build\bin\Release\Microsoft.Build.Utilities.Core.dll" target="lib\Microsoft.Build.Utilities.Core.dll" />
     -->
 
+    <file src="$Solution$\ps\Boot.ps1" target="ps\Boot.ps1" />
     <file src="$Solution$\ps\Utilities.ps1" target="ps\Utilities.ps1" />
-    <file src="$Solution$\ps\Get-VisualStudio.ps1" target="ps\Get-VisualStudio.ps1" />
-    <file src="$Solution$\ps\Get-UmbracoBuildEnv.ps1" target="ps\Get-UmbracoBuildEnv.ps1" />
-    <file src="$Solution$\ps\Get-UmbracoVersion.ps1" target="ps\Get-UmbracoVersion.ps1" />
-    <file src="$Solution$\ps\Set-UmbracoVersion.ps1" target="ps\Set-UmbracoVersion.ps1" />
-    <file src="$Solution$\ps\SetClear-GitVersion.ps1" target="ps\SetClear-GitVersion.ps1" />
+    <file src="$Solution$\ps\GetUmbracoBuildEnv.ps1" target="ps\GetUmbracoBuildEnv.ps1" />
+    <file src="$Solution$\ps\GetUmbracoVersion.ps1" target="ps\GetUmbracoVersion.ps1" />
+    <file src="$Solution$\ps\SetUmbracoVersion.ps1" target="ps\SetUmbracoVersion.ps1" />
+    <file src="$Solution$\ps\SetClearGitVersion.ps1" target="ps\SetClearGitVersion.ps1" />
+    <file src="$Solution$\ps\VerifyNuGet.ps1" target="ps\VerifyNuGet.ps1" />
   </files>
 </package>

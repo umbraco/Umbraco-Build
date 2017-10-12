@@ -11,25 +11,13 @@
   # BOOTSTRAP
   # ################################################################
 
-  $scriptRoot = "$PSScriptRoot"
-  $solutionRoot = [System.IO.Path]::GetFullPath("$scriptRoot\..")
-
-  # ensure we have empty build.tmp and build.out folders
-  $buildTemp = "$solutionRoot\build.tmp"
-  $buildOutput = "$solutionRoot\build.out"
-  if (test-path $buildTemp) { remove-item $buildTemp -force -recurse -errorAction SilentlyContinue > $null }
-  if (test-path $buildOutput) { remove-item $buildOutput -force -recurse -errorAction SilentlyContinue > $null }
-  mkdir $buildTemp > $null
-  mkdir $buildOutput > $null
-
   # ensure we have temp folder for downloaded tools
+  $scriptRoot = "$PSScriptRoot"
   $scriptTemp = "$scriptRoot\temp"
   if (-not (test-path $scriptTemp)) { mkdir $scriptTemp > $null }
 
-  # cache downloads for 4 days
+  # get NuGet
   $cache = 4
-
-  # ensure we have NuGet
   $nuget = "$scriptTemp\nuget.exe"
   if (-not $local)
   {
@@ -51,45 +39,34 @@
     break
   }
 
-  # ################################################################
-  # GET THE BUILD SYSTEM
-  # ################################################################
+  # get the buildsystem
+  $ubuildPath = [System.IO.Path]::GetFullPath("$scriptRoot\..")
 
-  $ubuild = "$scriptRoot\.."
-
-  # source build system scripts
-  . "$ubuild\ps\Utilities.ps1"
-  . "$ubuild\ps\Get-VisualStudio.ps1"
-  . "$ubuild\ps\Get-UmbracoBuildEnv.ps1"
-  . "$ubuild\ps\Set-UmbracoVersion.ps1"
-  . "$ubuild\ps\Get-UmbracoVersion.ps1"
-  . "$ubuild\ps\SetClear-GitVersion.ps1"
+  # boot the buildsystem
+  . "$ubuildPath\ps\Boot.ps1"
+  $ubuild.Boot($ubuildPath, $ubuildPath, @{ Local = $local; With7Zip = $false; WithNode = $false }, $true)
+  if (-not $?) { Write-Host "Abort" ; break }
 
   # ################################################################
   # BUILD
   # ################################################################
 
-  $uenv = Get-UmbracoBuildEnv -no7zip -noNode -local:$local
-  if (-not $?) { Write-Host "Abort" ; break }
-  $uversion = Get-UmbracoVersion
-  if (-not $?) { Write-Host "Abort" ; break }
-
   # build
   $buildConfiguration = "Release"
   $toolsVersion = "4.0"
-  if ($uenv.VisualStudio.Major -eq 15) { $toolsVersion = "15.0" }
-  $logfile = "$buildTemp\msbuild.umbraco-build.log"
+  if ($ubuild.BuildEnv.VisualStudio.Major -eq 15) { $toolsVersion = "15.0" }
+  $logfile = "$($ubuild.BuildTemp)\msbuild.umbraco-build.log"
 
   Write-Host "Compile"
   Write-Host "Logging to $logfile"
 
   try
   {
-    Set-GitVersion
+    $ubuild.SetGitVersion()
 
     # beware of the weird double \\ at the end of paths
     # see http://edgylogic.com/blog/powershell-and-external-commands-done-right/
-    &$uenv.VisualStudio.MsBuild "$solutionRoot\src\Umbraco.Build\Umbraco.Build.csproj" `
+    &$ubuild.BuildEnv.VisualStudio.MsBuild "$($ubuild.SolutionRoot)\src\Umbraco.Build\Umbraco.Build.csproj" `
       /p:WarningLevel=0 `
       /p:Configuration=$buildConfiguration `
       /p:Platform=AnyCPU `
@@ -104,25 +81,25 @@
   }
   finally
   {
-    Clear-GitVersion
+    $ubuild.ClearGitVersion()
   }
 
   # package nuget
   Write-Host "Pack"
-  &$uenv.NuGet Pack "$solutionRoot\build\nuspec\Umbraco.Build.nuspec" `
-    -Properties Solution="$solutionRoot" `
-    -Version $uversion.Semver.ToString() `
-    -Verbosity quiet -outputDirectory $buildOutput
+  &$ubuild.BuildEnv.NuGet Pack "$($ubuild.SolutionRoot)\build\nuspec\Umbraco.Build.nuspec" `
+    -Properties Solution="$($ubuild.SolutionRoot)" `
+    -Version $ubuild.Version.Semver.ToString() `
+    -Verbosity quiet -outputDirectory "$($ubuild.BuildOutput)"
 
   if (-not $?) { Write-Host "Abort" ; break }
 
   # run hook
-  $hook = "$solutionRoot\build\hooks\Post-Package-NuGet.ps1"
+  $hook = "$($ubuild.SolutionRoot)\build\hooks\Post-Package-NuGet.ps1"
   if (Test-Path -Path $hook)
   {
     Write-Host "Run Post-Package-NuGet hook"
     . "$hook" # define Post-Package-Nuget
-    Post-Package-NuGet $uenv $uversion
+    Post-Package-NuGet
     if (-not $?) { Write-Host "Abort" ; break }
   }
 

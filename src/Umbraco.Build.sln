@@ -18,12 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuSpec", "NuSpec", "{802C4E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{95E685EA-C3CB-4834-80B3-83D40FA8426D}"
 	ProjectSection(SolutionItems) = preProject
-		..\ps\Get-UmbracoBuildEnv.ps1 = ..\ps\Get-UmbracoBuildEnv.ps1
-		..\ps\Get-UmbracoVersion.ps1 = ..\ps\Get-UmbracoVersion.ps1
-		..\ps\Get-VisualStudio.ps1 = ..\ps\Get-VisualStudio.ps1
-		..\ps\Set-UmbracoVersion.ps1 = ..\ps\Set-UmbracoVersion.ps1
-		..\ps\SetClear-GitVersion.ps1 = ..\ps\SetClear-GitVersion.ps1
+		..\ps\Boot.ps1 = ..\ps\Boot.ps1
+		..\ps\GetUmbracoBuildEnv.ps1 = ..\ps\GetUmbracoBuildEnv.ps1
+		..\ps\GetUmbracoVersion.ps1 = ..\ps\GetUmbracoVersion.ps1
+		..\ps\SetClearGitVersion.ps1 = ..\ps\SetClearGitVersion.ps1
+		..\ps\SetUmbracoVersion.ps1 = ..\ps\SetUmbracoVersion.ps1
 		..\ps\Utilities.ps1 = ..\ps\Utilities.ps1
+		..\ps\VerifyNuget.ps1 = ..\ps\VerifyNuget.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{DDD72EDF-3B48-4112-84CC-4D576F453E7D}"
