@@ -2,6 +2,7 @@
   param (
     # run local - don't download, assume everything is ready
     [Parameter(Mandatory=$false)]
+    [Alias("l")]
     [switch] $local = $false
   )
 
