@@ -40,7 +40,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
   if (-not $?) { Write-Host "Abort" ; break }
   &"$($this.BuildPath)\ps\SetUmbracoVersion.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
-  &"$($this.BuildPath)\ps\SetClearGitVersion.ps1"
+  &"$($this.BuildPath)\ps\SetClearBuildVersion.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
   &"$($this.BuildPath)\ps\VerifyNuGet.ps1"
   if (-not $?) { Write-Host "Abort" ; break }
@@ -58,6 +58,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
   $this.BuildTemp = $buildTemp
   $this.BuildOutput = $buildOutput
   $this.SolutionRoot = $solutionRoot
+  $this.BuildNumber = $env:BUILD_NUMBER
 
   # initialize the build environment
   $this.BuildEnv = $this.GetUmbracoBuildEnv($uenvOptions, $scriptTemp)
@@ -68,7 +69,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
   if (-not $?) { Write-Host "Abort" ; break }
 
   # source the hools
-  $global:hooks = $this.GetFullPath("$PSScriptRoot\..\build\hooks\")
+  $global:hooks = $this.GetFullPath("$solutionRoot\build\hooks\")
   ls "$hooks\*.ps1" | ForEach-Object {
     &"$_"
   }

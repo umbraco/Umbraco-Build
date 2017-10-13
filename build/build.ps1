@@ -53,6 +53,9 @@
   # BUILD
   # ################################################################
 
+  # configure
+  $ubuild.ReleaseBranches = @( "master" )
+
   # build
   $buildConfiguration = "Release"
   $toolsVersion = "4.0"
@@ -64,7 +67,7 @@
 
   try
   {
-    $ubuild.SetGitVersion()
+    $ubuild.SetBuildVersion()
 
     # beware of the weird double \\ at the end of paths
     # see http://edgylogic.com/blog/powershell-and-external-commands-done-right/
@@ -83,7 +86,7 @@
   }
   finally
   {
-    $ubuild.ClearGitVersion()
+    $ubuild.ClearBuildVersion()
   }
 
   # package nuget

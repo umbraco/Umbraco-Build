@@ -34,7 +34,7 @@
     <file src="$Solution$\ps\GetUmbracoBuildEnv.ps1" target="ps\GetUmbracoBuildEnv.ps1" />
     <file src="$Solution$\ps\GetUmbracoVersion.ps1" target="ps\GetUmbracoVersion.ps1" />
     <file src="$Solution$\ps\SetUmbracoVersion.ps1" target="ps\SetUmbracoVersion.ps1" />
-    <file src="$Solution$\ps\SetClearGitVersion.ps1" target="ps\SetClearGitVersion.ps1" />
+    <file src="$Solution$\ps\SetClearBuildVersion.ps1" target="ps\SetClearBuildVersion.ps1" />
     <file src="$Solution$\ps\VerifyNuGet.ps1" target="ps\VerifyNuGet.ps1" />
   </files>
 </package>
