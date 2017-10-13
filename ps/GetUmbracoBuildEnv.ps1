@@ -68,7 +68,9 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
         &$nuget install 7-Zip.CommandLine -OutputDirectory $scriptTemp -Verbosity quiet
         if (-not $?) { Write-Host "Abort" ; break }
         $dir = ls "$scriptTemp\7-Zip.CommandLine.*" | sort -property Name -descending | select -first 1
-        $file = ls -path "$dir" -name 7za.exe -recurse
+        # selecting the first 1 because now there is 7za.exe and x64/7za.exe
+        # we could be more clever and detect whether we are x86 or x64
+        $file = ls -path "$dir" -name 7za.exe -recurse | select -first 1
         mv "$dir\$file" $sevenZip
         $this.RemoveDirectory($dir)
       }
