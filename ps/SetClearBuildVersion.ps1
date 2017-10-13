@@ -39,8 +39,10 @@ $global:ubuild | Add-Member -MemberType ScriptMethod SetBuildVersion -value `
   $hasprenum = $match.Groups[4].ToString().Length -ne 0
 
   # get git stuff
+  # note that rev-parse returns 'HEAD' not 'master' on VS Online, have to use env var
   $githash = &git rev-parse --short HEAD
-  $gitbranch = &git rev-parse --abbrev-ref HEAD
+  $gitbranch = $env:BUILD_SOURCEBRANCHNAME
+  if (-not $gitbranch) { $gitbranch = &git rev-parse --abbrev-ref HEAD }
   $gitstatus = &git status -uno -s
 
   # get build
