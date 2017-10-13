@@ -69,8 +69,11 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
   if (-not $?) { Write-Host "Abort" ; break }
 
   # source the hools
-  $global:hooks = $this.GetFullPath("$solutionRoot\build\hooks\")
-  ls "$hooks\*.ps1" | ForEach-Object {
-    &"$_"
+  $hooks = $this.GetFullPath("$solutionRoot\build\hooks")
+  if ([System.IO.Directory]::Exists($hooks))
+  {
+    ls "$hooks\*.ps1" | ForEach-Object {
+      &"$_"
+    }
   }
 }
