@@ -15,14 +15,14 @@
 
 $global:ubuild | Add-Member -MemberType ScriptMethod SetBuildVersion -value `
 {
-  $buildNumber = $this.buildNumber
+  $buildNumber = $this.BuildNumber
   if (-not $buildNumber)
   {
     $buildNumber = [DateTime]::Now.ToString("yyyyMMdd") + ".0"
-    $this.buildNumber = $buildNumber
+    $this.BuildNumber = $buildNumber
   }
 
-  $releaseBranches = $this.releaseBranches
+  $releaseBranches = $this.ReleaseBranches
   if (-not $releaseBranches) { $releaseBranches = @() }
 
   # parse SolutionInfo and retrieve the version string
