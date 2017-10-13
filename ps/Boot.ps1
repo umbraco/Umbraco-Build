@@ -58,7 +58,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
   $this.BuildTemp = $buildTemp
   $this.BuildOutput = $buildOutput
   $this.SolutionRoot = $solutionRoot
-  $this.BuildNumber = $env:BUILD_NUMBER
+  $this.BuildNumber = $env:BUILD_BUILDNUMBER
 
   # initialize the build environment
   $this.BuildEnv = $this.GetUmbracoBuildEnv($uenvOptions, $scriptTemp)
