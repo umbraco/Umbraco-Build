@@ -51,6 +51,8 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
     throw "Failed to locate NuGet.exe."
   }
 
+  $nugetConfig = @{$true="$solutionRoot\src\NuGet.config.user";$false="$solutionRoot\src\NuGet.config"}[(test-path "$solutionRoot\src\NuGet.config.user")]
+
   # ensure we have 7-Zip
   $sevenZip = "$scriptTemp\7za.exe"
   if ($options.With7Zip)
@@ -64,7 +66,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
       if (-not (test-path $sevenZip))
       {
         Write-Host "Download 7-Zip..."
-        &$nuget install 7-Zip.CommandLine -OutputDirectory $scriptTemp -Verbosity quiet
+        &$nuget install 7-Zip.CommandLine -OutputDirectory $scriptTemp -Verbosity quiet -ConfigFile $nugetConfig
         if (-not $?) { throw "Failed to download 7-Zip." }
         $dir = ls "$scriptTemp\7-Zip.CommandLine.*" | sort -property Name -descending | select -first 1
         # selecting the first 1 because now there is 7za.exe and x64/7za.exe
@@ -93,7 +95,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
       if (-not (test-path $vswhere))
       {
         Write-Host "Download VsWhere..."
-        &$nuget install vswhere -OutputDirectory $scriptTemp -Verbosity quiet
+        &$nuget install vswhere -OutputDirectory $scriptTemp -Verbosity quiet -ConfigFile $nugetConfig
         if (-not $?) { throw "Failed to download VsWhere." }
         $dir = ls "$scriptTemp\vswhere.*" | sort -property Name -descending | select -first 1
         $file = ls -path "$dir" -name vswhere.exe -recurse
@@ -120,7 +122,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
       if (-not (test-path $semver))
       {
         Write-Host "Download Semver..."
-        &$nuget install semver -OutputDirectory $scriptTemp -Verbosity quiet
+        &$nuget install semver -OutputDirectory $scriptTemp -Verbosity quiet -ConfigFile $nugetConfig
         $dir = ls "$scriptTemp\semver.*" | sort -property Name -descending | select -first 1
         $file = "$dir\lib\net452\Semver.dll"
         if (-not (test-path $file))
@@ -215,7 +217,8 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
 
   $uenv = @{
     Options = $options
-    Nuget = $nuget
+    NuGet = $nuget
+    NuGetConfig = $nugetConfig
   }
 
   if ($options.With7Zip) { $uenv.Zip = $sevenZip }
