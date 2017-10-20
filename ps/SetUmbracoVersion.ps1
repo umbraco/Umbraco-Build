@@ -48,5 +48,10 @@ $global:ubuild | Add-Member -MemberType ScriptMethod SetUmbracoVersion -value `
     "AssemblyCopyright\(`"Copyright © Umbraco (\d{4})`"\)", `
     "AssemblyCopyright(`"Copyright © Umbraco $year`")")
 
+  if ($this.HasMethod("SetMoreUmbracoVersion"))
+  {
+    $this.SetMoreUmbracoVersion($semver)
+  }
+
   return $semver
 }

@@ -8,13 +8,8 @@ using Semver;
 
 namespace Umbraco.Build
 {
-    public class NuGetVerifier
+    public class NuGetVerifier : ExportedObject
     {
-        public NuGetVerifier()
-        {
-            AssemblyResolver.EnsureInitialized();
-        }
-
         // reads a nuspec file and returns its dependencies
         // filename is the full or relative path to nuspec
         public Dependency[] GetNuSpecDependencies(string filename)

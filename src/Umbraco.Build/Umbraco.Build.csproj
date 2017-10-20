@@ -46,6 +46,8 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblySourceVersion.cs" />
+    <Compile Include="ExportedObject.cs" />
+    <Compile Include="ExpressPortUpdater.cs" />
     <Compile Include="NuGetVerifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tasks\SetAssemblySourceVersion.cs" />
