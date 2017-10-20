@@ -12,16 +12,14 @@ $global:ubuild | Add-Member -MemberType ScriptMethod SetUmbracoVersion -value `
   }
   catch
   {
-    Write-Error "Failed to load $this.BuildEnv.Semver"
-    break
+    throw "Failed to load $this.BuildEnv.Semver."
   }
 
   # validate input
   $ok = [Regex]::Match($version, "^[0-9]+\.[0-9]+\.[0-9]+(\-[a-z0-9\.]+)?(\+[0-9]+)?$")
   if (-not $ok.Success)
   {
-    Write-Error "Invalid version $version"
-    break
+    throw "Invalid version $version."
   }
 
   # parse input
@@ -31,8 +29,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod SetUmbracoVersion -value `
   }
   catch
   {
-    Write-Error "Invalid version $version"
-    break
+    throw "Invalid version $version."
   }
 
   #

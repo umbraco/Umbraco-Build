@@ -15,13 +15,25 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
     [Parameter(Mandatory=$false)]
     $uenvOptions,
 
+    # .IsUmbracoBuild
+    #     indicates whether we are building Umbraco.Build
+    #     as .BuildPath and .BuildVersion are obviously different
+    # .Keep
+    #     do not clear the tmp and out directories
     [Parameter(Mandatory=$false)]
-    [switch] $isUmbracoBuild
+    $switches
   )
+
+  if ($switches)
+  {
+    $isUmbracoBuild = $switches.IsUmbracoBuild
+    $keepBuildDirs = $switches.KeepBuildDirs
+  }
 
   if ($isUmbracoBuild)
   {
     $this.BuildPath = $ubuildPath
+    $this.BuildVersion = "? (building)"
   }
   else
   {
@@ -30,30 +42,39 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
 
     # load the lib
     Add-Type -Path "$($this.BuildPath)\lib\Umbraco.Build.dll"
-    if (-not $?) { Write-Host "Abort" ; break }
+    if (-not $?) { throw "Failed to load Umbraco.Build.dll." }
   }
 
+  $scripts = (
+    "GetUmbracoBuildEnv",
+    "GetUmbracoVersion",
+    "SetUmbracoVersion",
+    "SetClearBuildVersion",
+    "VerifyNuGet",
+    "Utilities"
+  )
+
   # source the scripts
-  &"$($this.BuildPath)\ps\GetUmbracoBuildEnv.ps1"
-  if (-not $?) { Write-Host "Abort" ; break }
-  &"$($this.BuildPath)\ps\GetUmbracoVersion.ps1"
-  if (-not $?) { Write-Host "Abort" ; break }
-  &"$($this.BuildPath)\ps\SetUmbracoVersion.ps1"
-  if (-not $?) { Write-Host "Abort" ; break }
-  &"$($this.BuildPath)\ps\SetClearBuildVersion.ps1"
-  if (-not $?) { Write-Host "Abort" ; break }
-  &"$($this.BuildPath)\ps\VerifyNuGet.ps1"
-  if (-not $?) { Write-Host "Abort" ; break }
-  &"$($this.BuildPath)\ps\Utilities.ps1"
-  if (-not $?) { Write-Host "Abort" ; break }
+  foreach ($script in $scripts) {
+    &"$($this.BuildPath)\ps\$script.ps1"
+    if (-not $?) { throw "Failed to source $script.ps1" }
+  }
 
   # ensure we have empty build.tmp and build.out folders
   $buildTemp = "$solutionRoot\build.tmp"
   $buildOutput = "$solutionRoot\build.out"
-  if (test-path $buildTemp) { remove-item $buildTemp -force -recurse -errorAction SilentlyContinue > $null }
-  if (test-path $buildOutput) { remove-item $buildOutput -force -recurse -errorAction SilentlyContinue > $null }
-  mkdir $buildTemp > $null
-  mkdir $buildOutput > $null
+  if ($keepBuildDirs)
+  {
+    if (-not (test-path $buildTemp)) { mkdir $buildTemp > $null }
+    if (-not (test-path $buildOutput)) { mkdir $buildOutput > $null }
+  }
+  else
+  {
+    if (test-path $buildTemp) { remove-item $buildTemp -force -recurse -errorAction SilentlyContinue > $null }
+    if (test-path $buildOutput) { remove-item $buildOutput -force -recurse -errorAction SilentlyContinue > $null }
+    mkdir $buildTemp > $null
+    mkdir $buildOutput > $null
+  }
 
   $this.BuildTemp = $buildTemp
   $this.BuildOutput = $buildOutput
@@ -62,13 +83,13 @@ $global:ubuild | Add-Member -MemberType ScriptMethod Boot -value `
 
   # initialize the build environment
   $this.BuildEnv = $this.GetUmbracoBuildEnv($uenvOptions, $scriptTemp)
-  if (-not $?) { Write-Host "Abort" ; break }
+  if (-not $?) { throw "Failed to get a build environment." }
 
   # initialize the version
   $this.Version = $this.GetUmbracoVersion()
-  if (-not $?) { Write-Host "Abort" ; break }
+  if (-not $?) { throw "Failed to get Umbraco version." }
 
-  # source the hools
+  # source the hooks
   $hooks = $this.GetFullPath("$solutionRoot\build\hooks")
   if ([System.IO.Directory]::Exists($hooks))
   {

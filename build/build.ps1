@@ -12,33 +12,10 @@
   # BOOTSTRAP
   # ################################################################
 
-  # ensure we have temp folder for downloaded tools
+  # ensure we have temp folder for downloads
   $scriptRoot = "$PSScriptRoot"
   $scriptTemp = "$scriptRoot\temp"
   if (-not (test-path $scriptTemp)) { mkdir $scriptTemp > $null }
-
-  # get NuGet
-  $cache = 4
-  $nuget = "$scriptTemp\nuget.exe"
-  if (-not $local)
-  {
-    $source = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
-    if ((test-path $nuget) -and ((ls $nuget).CreationTime -lt [DateTime]::Now.AddDays(-$cache)))
-    {
-      Remove-File $nuget
-    }
-    if (-not (test-path $nuget))
-    {
-      Write-Host "Download NuGet..."
-      Invoke-WebRequest $source -OutFile $nuget
-      if (-not $?) { Write-Host "Abort" ; break }
-    }
-  }
-  elseif (-not (test-path $nuget))
-  {
-    Write-Host "Failed to locate NuGet.exe"
-    break
-  }
 
   # get the buildsystem
   $ubuildPath = [System.IO.Path]::GetFullPath("$scriptRoot\..")
@@ -46,8 +23,11 @@
   # boot the buildsystem
   # this creates $global:ubuild
   &"$ubuildPath\ps\Boot.ps1"
-  $ubuild.Boot($ubuildPath, $ubuildPath, @{ Local = $local; With7Zip = $false; WithNode = $false }, $true)
-  if (-not $?) { Write-Host "Abort" ; break }
+  $ubuild.Boot($ubuildPath, $ubuildPath, `
+    @{ Local = $local; With7Zip = $false; WithNode = $false }, `
+    @{ IsUmbracoBuild = $true })
+  if (-not $?) { throw "Failed to boot the build system." }
+  Write-Host "Umbraco.Build v$($ubuild.BuildVersion)"
 
   # ################################################################
   # BUILD
@@ -58,8 +38,6 @@
 
   # build
   $buildConfiguration = "Release"
-  $toolsVersion = "4.0"
-  if ($ubuild.BuildEnv.VisualStudio.Major -eq 15) { $toolsVersion = "15.0" }
   $logfile = "$($ubuild.BuildTemp)\msbuild.umbraco-build.log"
 
   Write-Host "Compile"
@@ -78,11 +56,11 @@
       /p:PipelineDependsOnBuild=False `
       /p:Verbosity=minimal `
       /t:Clean`;Rebuild `
-      /tv:$toolsVersion `
+      /tv:"$($ubuild.BuildEnv.VisualStudio.ToolsVersion)" `
       /p:UmbracoBuild=True `
       > $logfile
 
-    if (-not $?) { Write-Host "Abort" ; break }
+    if (-not $?) { throw "Failed to compile." }
   }
   finally
   {
@@ -96,14 +74,14 @@
     -Version $ubuild.Version.Semver.ToString() `
     -Verbosity quiet -outputDirectory "$($ubuild.BuildOutput)"
 
-  if (-not $?) { Write-Host "Abort" ; break }
+  if (-not $?) { throw "Failed to pack NuGet." }
 
   # run hook
-  if ($ubuild.PSObject.Methods.Name -match "PostPackageNuGet")
+  if ($ubuild.HasMethod("PostPackageNuGet"))
   {
     Write-Host "Run PostPackageNuGet hook"
     $ubuild.PostPackageNuGet()
-    if (-not $?) { Write-Host "Abort" ; break }
+    if (-not $?) { throw "Failed to run hook." }
   }
 
   # done

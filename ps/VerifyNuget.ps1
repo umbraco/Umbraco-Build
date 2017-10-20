@@ -57,11 +57,11 @@ $global:ubuild | Add-Member -MemberType ScriptMethod VerifyNuGet -value `
 
   $src = "$($this.SolutionRoot)\src"
   $pkgs = $verifier.GetProjectsPackages($src, $projects)
-  if (-not $?) { Write-Host "Abort" ; break }
+  if (-not $?) { throw "Failed to get projects packages." }
   #Write-Package "All" $pkgs
 
   $errs = $verifier.GetPackageErrors($pkgs)
-  if (-not $?) { Write-Host "Abort" ; break }
+  if (-not $?) { throw "Failed to get packages errors." }
 
   if ($errs.Length -gt 0)
   {
@@ -77,8 +77,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod VerifyNuGet -value `
   }
   if ($errs.Length -gt 0)
   {
-    Write-Error "Found non-consolidated package dependencies"
-    break
+    throw "Found non-consolidated package dependencies."
   }
 
   $nuerr = $false
@@ -86,11 +85,11 @@ $global:ubuild | Add-Member -MemberType ScriptMethod VerifyNuGet -value `
   foreach ($nuspec in $nuspecs)
   {
     $deps = $verifier.GetNuSpecDependencies("$nupath\$nuspec.nuspec")
-    if (-not $?) { Write-Host "Abort" ; break }
+    if (-not $?) { throw "Failed to get NuSpec dependencies." }
     #Write-NuSpec $nuspec $deps
 
     $errs = $verifier.GetNuSpecErrors($pkgs, $deps)
-    if (-not $?) { Write-Host "Abort" ; break }
+    if (-not $?) { "Failed to get NuSpec errors." }
 
     if ($errs.Length -gt 0)
     {
@@ -107,7 +106,6 @@ $global:ubuild | Add-Member -MemberType ScriptMethod VerifyNuGet -value `
 
   if ($nuerr)
   {
-    Write-Error "Found inconsistent NuGet dependencies"
-    break
+    throw "Found inconsistent NuGet dependencies."
   }
 }

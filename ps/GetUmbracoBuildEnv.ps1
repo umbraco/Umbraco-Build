@@ -43,13 +43,12 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
     {
       Write-Host "Download NuGet..."
       Invoke-WebRequest $source -OutFile $nuget
-      if (-not $?) { Write-Host "Abort" ; break }
+      if (-not $?) { throw "Failed to download NuGet." }
     }
   }
   elseif (-not (test-path $nuget))
   {
-    Write-Host "Failed to locate NuGet.exe"
-    break
+    throw "Failed to locate NuGet.exe."
   }
 
   # ensure we have 7-Zip
@@ -66,7 +65,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
       {
         Write-Host "Download 7-Zip..."
         &$nuget install 7-Zip.CommandLine -OutputDirectory $scriptTemp -Verbosity quiet
-        if (-not $?) { Write-Host "Abort" ; break }
+        if (-not $?) { throw "Failed to download 7-Zip." }
         $dir = ls "$scriptTemp\7-Zip.CommandLine.*" | sort -property Name -descending | select -first 1
         # selecting the first 1 because now there is 7za.exe and x64/7za.exe
         # we could be more clever and detect whether we are x86 or x64
@@ -77,8 +76,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
     }
     elseif (-not (test-path $sevenZip))
     {
-      Write-Host "Failed to locate 7za.exe"
-      break
+      throw "Failed to locate 7za.exe."
     }
   }
 
@@ -96,7 +94,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
       {
         Write-Host "Download VsWhere..."
         &$nuget install vswhere -OutputDirectory $scriptTemp -Verbosity quiet
-        if (-not $?) { Write-Host "Abort" ; break }
+        if (-not $?) { throw "Failed to download VsWhere." }
         $dir = ls "$scriptTemp\vswhere.*" | sort -property Name -descending | select -first 1
         $file = ls -path "$dir" -name vswhere.exe -recurse
         mv "$dir\$file" $vswhere
@@ -105,8 +103,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
     }
     elseif (-not (test-path $vswhere))
     {
-      Write-Host "Failed to locate VsWhere.exe"
-      break
+      throw "Failed to locate VsWhere.exe."
     }
   }
 
@@ -128,8 +125,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
         $file = "$dir\lib\net452\Semver.dll"
         if (-not (test-path $file))
         {
-          Write-Error "Failed to file $file"
-          break
+          throw "Failed to locate $file"
         }
         mv "$file" $semver
         $this.RemoveDirectory($dir)
@@ -137,8 +133,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
     }
     elseif (-not (test-path $semver))
     {
-      Write-Host "Failed to locate Semver.dll"
-      break
+      throw "Failed to locate $semver"
     }
 
     try
@@ -147,8 +142,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
     }
     catch
     {
-      Write-Error -Exception $_.Exception -Message "Failed to load $semver"
-      break
+      throw "Failed to load $semver"
     }
   }
 
@@ -163,15 +157,14 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
       {
         Write-Host "Download Node..."
         Invoke-WebRequest $source -OutFile "$scriptTemp\node-v6.9.1-win-x86.7z"
-        if (-not $?) { Write-Host "Abort" ; break }
+        if (-not $?) { throw "Failed to download Node." }
         &$sevenZip x "$scriptTemp\node-v6.9.1-win-x86.7z" -o"$scriptTemp" -aos > $nul
         $this.RemoveFile("$scriptTemp\node-v6.9.1-win-x86.7z")
       }
     }
     elseif (-not (test-path $node))
     {
-      Write-Host "Failed to locate Node"
-      break
+      throw "Failed to locate Node."
     }
   }
 
@@ -184,7 +177,7 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
     $vsVer = ""
     $msBuild = $null
 
-    &$vswhere | foreach {
+    &$vswhere | ForEach-Object {
       if ($_.StartsWith("installationPath:")) { $vsPath = $_.SubString("installationPath:".Length).Trim() }
       if ($_.StartsWith("installationVersion:")) { $vsVer = $_.SubString("installationVersion:".Length).Trim() }
     }
@@ -207,11 +200,15 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
 
     if ($msBuild)
     {
+      $toolsVersion = "4.0"
+      if ($vsMajor -eq 15) { $toolsVersion = "15.0" }
+
       $vs = @{
         Path = $vsPath
         Major = $vsMajor
         Minor = $vsMinor
         MsBuild = "$msBuild\MsBuild.exe"
+        ToolsVersion = $toolsVersion
       }
     }
   }
