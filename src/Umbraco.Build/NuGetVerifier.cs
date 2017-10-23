@@ -16,7 +16,7 @@ namespace Umbraco.Build
         {
             NuSpec nuspec;
             var serializer = new XmlSerializer(typeof(NuSpec));
-            using (var reader = new StreamReader(filename))
+            using (var reader = new IgnoreNsXmlTextReader(new StreamReader(filename)))
             {
                 nuspec = (NuSpec) serializer.Deserialize(reader);
             }
@@ -106,7 +106,7 @@ namespace Umbraco.Build
 
             PackagesConfigPackages pkgs;
             var serializer = new XmlSerializer(typeof(PackagesConfigPackages));
-            using (var reader = new StreamReader(filename))
+            using (var reader = new IgnoreNsXmlTextReader(new StreamReader(filename)))
             {
                 pkgs = (PackagesConfigPackages) serializer.Deserialize(reader);
             }
@@ -184,15 +184,15 @@ namespace Umbraco.Build
             public string Project { get; set; }
         }
 
-        [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd")]
-        [XmlRoot(Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd", IsNullable = false, ElementName = "package")]
+        [XmlType(AnonymousType = true /*, Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"*/)]
+        [XmlRoot(/*Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd",*/ IsNullable = false, ElementName = "package")]
         public class NuSpec
         {
             [XmlElement("metadata")]
             public NuSpecMetadata Metadata { get; set; }
         }
 
-        [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd", TypeName = "metadata")]
+        [XmlType(AnonymousType = true, /*Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd",*/ TypeName = "metadata")]
         public class NuSpecMetadata
         {
             [XmlArray("dependencies")]
@@ -200,7 +200,7 @@ namespace Umbraco.Build
             public NuSpecDependency[] Dependencies { get; set; }
         }
 
-        [XmlType(AnonymousType = true, Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd", TypeName = "dependencies")]
+        [XmlType(AnonymousType = true, /*Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd",*/ TypeName = "dependencies")]
         public class NuSpecDependency
         {
             [XmlAttribute(AttributeName = "id")]

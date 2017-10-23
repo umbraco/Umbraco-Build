@@ -1,5 +1,5 @@
 
-$global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoVersion -value `
+$ubuild.DefineMethod("GetUmbracoVersion",
 {
   # parse SolutionInfo and retrieve the version string
   $filepath = "$($this.SolutionRoot)\src\SolutionInfo.cs"
@@ -23,4 +23,4 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoVersion -value `
   }
 
   return $versions
-}
+})

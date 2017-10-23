@@ -36,5 +36,9 @@
     <file src="$Solution$\ps\SetUmbracoVersion.ps1" target="ps\SetUmbracoVersion.ps1" />
     <file src="$Solution$\ps\SetClearBuildVersion.ps1" target="ps\SetClearBuildVersion.ps1" />
     <file src="$Solution$\ps\VerifyNuGet.ps1" target="ps\VerifyNuGet.ps1" />
+
+    <!-- also ship that one, to simplify upgrades -->
+    <file src="$Solution$\bootstrap\build-bootstrap.ps1" target="ps\build-bootstrap.ps1" />
+
   </files>
 </package>

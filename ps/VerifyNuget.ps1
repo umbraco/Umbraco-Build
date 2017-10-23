@@ -1,5 +1,5 @@
 
-$global:ubuild | Add-Member -MemberType ScriptMethod VerifyNuGet -value `
+$ubuild.DefineMethod("VerifyNuGetConsistency",
 {
   param (
     [Parameter(Mandatory=$true)]
@@ -108,4 +108,4 @@ $global:ubuild | Add-Member -MemberType ScriptMethod VerifyNuGet -value `
   {
     throw "Found inconsistent NuGet dependencies."
   }
-}
+})

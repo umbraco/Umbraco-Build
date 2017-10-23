@@ -13,7 +13,7 @@
 # comes *after* that version, ie -alpha.0.20171012.0001 > -alpha, and so we
 # should upgrade the alpha/beta number at the moment we release it
 
-$global:ubuild | Add-Member -MemberType ScriptMethod SetBuildVersion -value `
+$ubuild.DefineMethod("SetBuildVersion",
 {
   $buildNumber = $this.BuildNumber
   if (-not $buildNumber)
@@ -64,9 +64,9 @@ $global:ubuild | Add-Member -MemberType ScriptMethod SetBuildVersion -value `
   $this.ReplaceFileText("$($this.SolutionRoot)\src\SolutionInfo.cs", `
     "AssemblyInformationalVersion\(`".+`"\)", `
     "AssemblyInformationalVersion(`"$version$build @$githash$dirty`")")
-}
+})
 
-$global:ubuild | Add-Member -MemberType ScriptMethod ClearBuildVersion -value `
+$ubuild.DefineMethod("ClearBuildVersion",
 {
   # parse SolutionInfo and retrieve the version string
   $filepath = "$($this.SolutionRoot)\src\SolutionInfo.cs"
@@ -82,4 +82,4 @@ $global:ubuild | Add-Member -MemberType ScriptMethod ClearBuildVersion -value `
   $this.ReplaceFileText("$($this.SolutionRoot)\src\SolutionInfo.cs", `
     "AssemblyInformationalVersion\(`".+`"\)", `
     "AssemblyInformationalVersion(`"$version`")")
-}
+})

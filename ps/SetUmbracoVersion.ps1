@@ -1,5 +1,5 @@
 
-$global:ubuild | Add-Member -MemberType ScriptMethod SetUmbracoVersion -value `
+$ubuild.DefineMethod("SetUmbracoVersion",
 {
   param (
     [Parameter(Mandatory=$true)]
@@ -54,4 +54,4 @@ $global:ubuild | Add-Member -MemberType ScriptMethod SetUmbracoVersion -value `
   }
 
   return $semver
-}
+})

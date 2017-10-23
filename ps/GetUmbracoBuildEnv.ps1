@@ -1,5 +1,5 @@
 
-$global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
+$ubuild.DefineMethod("GetUmbracoBuildEnv",
 {
   param (
     [Parameter(Mandatory=$true)]
@@ -51,7 +51,11 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
     throw "Failed to locate NuGet.exe."
   }
 
-  $nugetConfig = @{$true="$solutionRoot\src\NuGet.config.user";$false="$solutionRoot\src\NuGet.config"}[(test-path "$solutionRoot\src\NuGet.config.user")]
+  $src ="$($this.SolutionRoot)\src"
+  $nugetConfig = @{
+    $true = "$src\NuGet.config.user";
+    $false = "$src\NuGet.config"
+  }[(test-path "$src\NuGet.config.user")]
 
   # ensure we have 7-Zip
   $sevenZip = "$scriptTemp\7za.exe"
@@ -227,4 +231,4 @@ $global:ubuild | Add-Member -MemberType ScriptMethod GetUmbracoBuildEnv -value `
   if ($options.WithNode) { $uenv.NodePath = $node }
 
   return $uenv
-}
+})

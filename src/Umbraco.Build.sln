@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Build", "Umbraco.Build\Umbraco.Build.csproj", "{E6300054-F946-4B3A-9862-07D4B51293C0}"
 EndProject
@@ -32,6 +32,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{DDD72EDF-3
 		..\BUILD.md = ..\BUILD.md
 		..\LICENSE.md = ..\LICENSE.md
 		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bootstrap", "Bootstrap", "{C354A607-3E8A-40E5-9421-1B63AF85BEA7}"
+	ProjectSection(SolutionItems) = preProject
+		..\bootstrap\build-bootstrap.ps1 = ..\bootstrap\build-bootstrap.ps1
+		..\bootstrap\build.ps1 = ..\bootstrap\build.ps1
 	EndProjectSection
 EndProject
 Global
