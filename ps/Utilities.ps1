@@ -41,7 +41,14 @@ $ubuild.DefineMethod("RemoveDirectory",
 {
   param ( $dir )
 
+  $errCount = $error.Count
   Remove-Item $dir -force -recurse -errorAction SilentlyContinue > $null
+
+  # stupid PS "silently continues" yet creates an error
+  while ($error.Count -ne $errCount)
+  {
+    $error.RemoveAt(0)
+  }
 })
 
 # removes a file, doesn't complain if it does not exist
@@ -49,7 +56,14 @@ $ubuild.DefineMethod("RemoveFile",
 {
   param ( $file )
 
+  $errCount = $error.Count
   Remove-Item $file -force -errorAction SilentlyContinue > $null
+
+  # stupid PS "silently continues" yet creates an error
+  while ($error.Count -ne $errCount)
+  {
+    $error.RemoveAt(0)
+  }
 })
 
 # copies a file, creates target dir if needed
