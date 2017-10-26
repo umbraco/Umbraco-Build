@@ -1,10 +1,10 @@
 
-  # this script should be unsed in build.ps1 scripts right after the
+  # this script should be used in build.ps1 scripts right after the
   # the parameters declaration, to retrieve the build environment, ie
   #
   # $ubuild = &"$PSScriptRoot\build-bootstrap.ps1"
   #
-  # see build-bootstrap.ps1 for more usage details
+  # see sample build.ps1 script for more usage details
 
   # THIS FILE IS DISTRIBUTED AS PART OF UMBRACO.BUILD
   # DO NOT MODIFY IT - ALWAYS USED THE COMMON VERSION
