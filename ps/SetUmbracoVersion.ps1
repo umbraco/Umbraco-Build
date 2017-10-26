@@ -48,10 +48,17 @@ $ubuild.DefineMethod("SetUmbracoVersion",
     "AssemblyCopyright\(`"Copyright © Umbraco (\d{4})`"\)", `
     "AssemblyCopyright(`"Copyright © Umbraco $year`")")
 
+  $this.Version = @{
+    Semver = $semver
+    Release = $release
+    Comment = $semver.PreRelease
+    Build = $semver.Build
+  }
+
   if ($this.HasMethod("SetMoreUmbracoVersion"))
   {
     $this.SetMoreUmbracoVersion($semver)
   }
 
-  return $semver
+  return $this.Version
 })
