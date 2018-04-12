@@ -75,8 +75,8 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       if (-not (test-path $sevenZip))
       {
         Write-Host "Download 7-Zip..."
-        $params = @{ OutputDirectory = $scriptTemp; Verbosity = "quiet" }
-        if ($nugetConfig -ne "") { $params.Add("ConfigFile", $nugetConfig) }
+        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
+        if ($nugetConfig -ne "") { $params += "-ConfigFile", $nugetConfig }
         &$nuget install 7-Zip.CommandLine @params
         if (-not $?) { throw "Failed to download 7-Zip." }
         $dir = ls "$scriptTemp\7-Zip.CommandLine.*" | sort -property Name -descending | select -first 1
@@ -106,8 +106,8 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       if (-not (test-path $vswhere))
       {
         Write-Host "Download VsWhere..."
-        $params = @{ OutputDirectory = $scriptTemp; Verbosity = "quiet" }
-        if ($nugetConfig -ne "") { $params.Add("ConfigFile", $nugetConfig) }
+        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
+        if ($nugetConfig -ne "") { $params += "-ConfigFile", $nugetConfig }
         &$nuget install vswhere @params
         if (-not $?) { throw "Failed to download VsWhere." }
         $dir = ls "$scriptTemp\vswhere.*" | sort -property Name -descending | select -first 1
@@ -135,8 +135,8 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       if (-not (test-path $semver))
       {
         Write-Host "Download Semver..."
-        $params = @{ OutputDirectory = $scriptTemp; Verbosity = "quiet" }
-        if ($nugetConfig -ne "") { $params.Add("ConfigFile", $nugetConfig) }
+        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
+        if ($nugetConfig -ne "") { $params += "-ConfigFile", $nugetConfig }
         &$nuget install semver @params
         $dir = ls "$scriptTemp\semver.*" | sort -property Name -descending | select -first 1
         $file = "$dir\lib\net452\Semver.dll"
