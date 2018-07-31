@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
-using Semver;
+using NuGet.Versioning;
 
 namespace Umbraco.Build
 {
@@ -32,14 +32,14 @@ namespace Umbraco.Build
                     dep.MinInclude = parts[0].StartsWith("[");
                     dep.MaxInclude = parts[0].EndsWith("]");
 
-                    if (!SemVersion.TryParse(parts[0].Substring(1, parts[0].Length - 2).Trim(), out var version)) continue;
+                    if (!NuGetVersion.TryParse(parts[0].Substring(1, parts[0].Length - 2).Trim(), out var version)) continue;
                     dep.MinVersion = dep.MaxVersion = version;
                 }
                 else
                 {
-                    if (!SemVersion.TryParse(parts[0].Substring(1).Trim(), out var version)) continue;
+                    if (!NuGetVersion.TryParse(parts[0].Substring(1).Trim(), out var version)) continue;
                     dep.MinVersion = version;
-                    if (!SemVersion.TryParse(parts[1].Substring(0, parts[1].Length - 1).Trim(), out version)) continue;
+                    if (!NuGetVersion.TryParse(parts[1].Substring(0, parts[1].Length - 1).Trim(), out version)) continue;
                     dep.MaxVersion = version;
                     dep.MinInclude = parts[0].StartsWith("[");
                     dep.MaxInclude = parts[1].EndsWith("]");
@@ -112,7 +112,7 @@ namespace Umbraco.Build
             }
             foreach (var p in pkgs.Packages)
             {
-                if (!SemVersion.TryParse(p.Version, out var version)) continue;
+                if (!NuGetVersion.TryParse(p.Version, out var version)) continue;
                 packages.Add(new Package { Id = p.Id, Version = version, Project = GetDirectoryName(filename) });
             }
         }
@@ -131,7 +131,7 @@ namespace Umbraco.Build
             foreach (var p in proj.ItemGroups.Where(x => x.Packages != null).SelectMany(x => x.Packages))
             {
                 var sversion = p.VersionE ?? p.VersionA;
-                if (!SemVersion.TryParse(sversion, out var version)) continue;
+                if (!NuGetVersion.TryParse(sversion, out var version)) continue;
                 packages.Add(new Package { Id = p.Id, Version = version, Project = GetDirectoryName(filename) });
             }
         }
@@ -165,14 +165,14 @@ namespace Umbraco.Build
         public class NuGetError
         {
             public Dependency Dependency { get; set; }
-            public SemVersion Version { get; set; }
+            public NuGetVersion Version { get; set; }
         }
 
         public class Dependency
         {
             public string Id { get; set; }
-            public SemVersion MinVersion { get; set; }
-            public SemVersion MaxVersion { get; set; }
+            public NuGetVersion MinVersion { get; set; }
+            public NuGetVersion MaxVersion { get; set; }
             public bool MinInclude { get; set; }
             public bool MaxInclude { get; set; }
         }
@@ -180,7 +180,7 @@ namespace Umbraco.Build
         public class Package
         {
             public string Id { get; set; }
-            public SemVersion Version { get; set; }
+            public NuGetVersion Version { get; set; }
             public string Project { get; set; }
         }
 

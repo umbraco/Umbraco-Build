@@ -54,8 +54,8 @@
     <Compile Include="AssemblyResolver.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="semver">
-      <Version>2.0.4</Version>
+    <PackageReference Include="NuGet.Versioning">
+      <Version>4.7.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

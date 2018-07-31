@@ -1,10 +1,8 @@
 
-  # this script should be used in build.ps1 scripts right after the
-  # the parameters declaration, to retrieve the build environment, ie
-  #
-  # $ubuild = &"$PSScriptRoot\build-bootstrap.ps1"
-  #
-  # see sample build.ps1 script for more usage details
+  # this script should be dot-sourced into the build.ps1 scripts
+  # right after the parameters declaration
+  # ie
+  # . "$PSScriptRoot\build-bootstrap.ps1"
 
   # THIS FILE IS DISTRIBUTED AS PART OF UMBRACO.BUILD
   # DO NOT MODIFY IT - ALWAYS USED THE COMMON VERSION
@@ -43,12 +41,28 @@
     throw "Failed to locate NuGet.exe."
   }
 
+  # NuGet notes
+  # As soon as we use -ConfigFile, NuGet uses that file, and only that file, and does not
+  # merge configuration from system level. See comments in NuGet.Client solution, class
+  # NuGet.Configuration.Settings, method LoadDefaultSettings.
+  # For NuGet to merge configurations, it needs to "find" the file in the current directory,
+  # or above. Which means we cannot really use -ConfigFile but instead have to have Umbraco's
+  # NuGet.config file at root, and always run NuGet.exe while at root or in a directory below
+  # root.
+
+  $solutionRoot = "$scriptRoot\.."
+  $testPwd = [System.IO.Path]::GetFullPath($pwd.Path) + "\"
+  $testRoot = [System.IO.Path]::GetFullPath($solutionRoot) + "\"
+  if (-not $testPwd.ToLower().StartsWith($testRoot.ToLower()))
+  {
+      throw "Cannot run outside of the solution's root."
+  }
+
   # get the build system
   if (-not $local)
   {
-    $solutionRoot = "$scriptRoot\.."
-    $nugetConfig = @{$true="$solutionRoot\src\NuGet.config.user";$false="$solutionRoot\src\NuGet.config"}[(test-path "$solutionRoot\src\NuGet.config.user")]
-    &$nuget install Umbraco.Build -OutputDirectory $scriptTemp -Verbosity quiet -PreRelease -ConfigFile $nugetConfig
+    $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet", "-PreRelease"
+    &$nuget install Umbraco.Build @params
     if (-not $?) { throw "Failed to download Umbraco.Build." }
   }
 

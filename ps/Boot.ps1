@@ -64,7 +64,7 @@ $ubuild.DefineMethod("Boot",
 
   $this.BuildPath = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
   $this.SolutionRoot = [System.IO.Path]::GetFullPath("$buildRoot\..")
-  
+
   if ($isUmbracoBuild)
   {
     $this.BuildVersion = "? (building)"

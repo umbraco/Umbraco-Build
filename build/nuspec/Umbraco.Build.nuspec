@@ -18,7 +18,7 @@
   </metadata>
   <files>
     <file src="$Solution$\src\Umbraco.Build\bin\Release\Umbraco.Build.dll" target="lib\Umbraco.Build.dll" />
-    <file src="$Solution$\src\Umbraco.Build\bin\Release\Semver.dll" target="lib\Semver.dll" />
+    <file src="$Solution$\src\Umbraco.Build\bin\Release\NuGet.Versioning.dll" target="lib\NuGet.Versioning.dll" />
     <!--
     <file src="$Solution$\src\Umbraco.Build\bin\Release\LibGit2Sharp.dll" target="lib\LibGit2Sharp.dll" />
     <file src="$Solution$\src\Umbraco.Build\bin\Release\lib\win32\x86\git2-15e1193.dll" target="lib\lib\win32\x86\git2-15e1193.dll" />
