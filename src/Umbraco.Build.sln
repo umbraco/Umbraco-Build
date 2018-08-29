@@ -40,6 +40,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bootstrap", "Bootstrap", "{
 		..\bootstrap\build.ps1 = ..\bootstrap\build.ps1
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Build.Tests", "Umbraco.Build.Tests\Umbraco.Build.Tests.csproj", "{B6590C8B-FAAB-48AF-8B4F-6BEE5E88B8A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{E6300054-F946-4B3A-9862-07D4B51293C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6300054-F946-4B3A-9862-07D4B51293C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6300054-F946-4B3A-9862-07D4B51293C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6590C8B-FAAB-48AF-8B4F-6BEE5E88B8A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6590C8B-FAAB-48AF-8B4F-6BEE5E88B8A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6590C8B-FAAB-48AF-8B4F-6BEE5E88B8A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6590C8B-FAAB-48AF-8B4F-6BEE5E88B8A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
