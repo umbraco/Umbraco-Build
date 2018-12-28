@@ -158,19 +158,20 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
   }
 
   # ensure we have node
-  $node = "$scriptTemp\node-v6.9.1-win-x86"
+  $nodeVersion = '10.15.0'
+  $node = "$scriptTemp\node-v$nodeVersion-win-x86"
   if ($options.WithNode)
   {
     if (-not $options.Local)
     {
-      $source = "http://nodejs.org/dist/v6.9.1/node-v6.9.1-win-x86.7z"
+      $source = "http://nodejs.org/dist/v$nodeVersion/node-v$nodeVersion-win-x86.7z"
       if (-not (test-path $node))
       {
         Write-Host "Download Node..."
-        Invoke-WebRequest $source -OutFile "$scriptTemp\node-v6.9.1-win-x86.7z"
+        Invoke-WebRequest $source -OutFile "$scriptTemp\node-v$nodeVersion-win-x86.7z"
         if (-not $?) { throw "Failed to download Node." }
-        &$sevenZip x "$scriptTemp\node-v6.9.1-win-x86.7z" -o"$scriptTemp" -aos > $nul
-        $this.RemoveFile("$scriptTemp\node-v6.9.1-win-x86.7z")
+        &$sevenZip x "$scriptTemp\node-v$nodeVersion-win-x86.7z" -o"$scriptTemp" -aos > $nul
+        $this.RemoveFile("$scriptTemp\node-v$nodeVersion-win-x86.7z")
       }
     }
     elseif (-not (test-path $node))
