@@ -33,8 +33,11 @@
   $buildConfiguration = "Release"
   $logfile = "$($ubuild.BuildTemp)\msbuild.umbraco-build.log"
 
-  Write-Host "Compile"
-  Write-Host "Logging to $logfile"
+  # restore NuGet
+  Write-Host "Restore NuGet"
+  Write-Host "Logging to $($ubuild.BuildTemp)\nuget.restore.log"
+  &$ubuild.BuildEnv.NuGet restore "$($ubuild.SolutionRoot)\src\Umbraco.Build.sln" > "$($ubuild.BuildTemp)\nuget.restore.log"
+  if (-not $?) { throw "Failed to restore NuGet packages." }
 
   try
   {
@@ -43,6 +46,8 @@
 
     # beware of the weird double \\ at the end of paths
     # see http://edgylogic.com/blog/powershell-and-external-commands-done-right/
+    Write-Host "Compile"
+    Write-Host "Logging to $logfile"
     &$ubuild.BuildEnv.VisualStudio.MsBuild "$($ubuild.SolutionRoot)\src\Umbraco.Build\Umbraco.Build.csproj" `
       /p:WarningLevel=0 `
       /p:Configuration=$buildConfiguration `
