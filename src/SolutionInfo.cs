@@ -13,8 +13,8 @@ using System.Resources;
 
 // this is the ONLY ONE the CLR cares about for compatibility
 // should change ONLY when "hard" breaking compatibility (manual change)
-[assembly: AssemblyVersion("0.2.0")]
+[assembly: AssemblyVersion("0.2.1")]
 
 // these are FYI and changed automatically
-[assembly: AssemblyFileVersion("0.2.0")]
-[assembly: AssemblyInformationalVersion("0.2.0")]
+[assembly: AssemblyFileVersion("0.2.1")]
+[assembly: AssemblyInformationalVersion("0.2.1")]
