@@ -13,7 +13,7 @@ Add-Member -InputObject $ubuild -MemberType ScriptMethod "DefineMethod" -value `
 $ubuild.DefineMethod("HasMethod",
 {
   param ( $name )
-  return $this.PSObject.Methods.Name -match $name
+  return $this.PSObject.Methods.Name -eq $name
 })
 
 # shows error
