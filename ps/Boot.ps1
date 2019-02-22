@@ -16,6 +16,26 @@ $ubuild.DefineMethod("HasMethod",
   return $this.PSObject.Methods.Name -eq $name
 })
 
+# runs a method
+$ubuild.DefineMethod("RunMethod",
+{
+  param ( [String[]] $command)
+  $name, $arguments = $command
+  if ($arguments -eq $null)
+  {
+    $arguments = @()
+  }
+  $method = ($this.PSObject.Methods | Where { $_.Name -eq $name } | Select -First 1)
+  if ($method -eq $null)
+  {
+    throw "Unknown method: $name."
+  }
+  else
+  {
+    $method.Invoke($arguments)
+  }
+})
+
 # shows error
 $ubuild.DefineMethod("OnError",
 {
