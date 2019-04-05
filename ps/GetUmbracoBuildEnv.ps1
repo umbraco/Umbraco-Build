@@ -188,33 +188,50 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     $vsPath = ""
     $vsVer = ""
     $msBuild = $null
+    $toolsVersion = ""
 
+    $vsMajor = if ($option.VsMajor) { $option.VsMajor } else { "15" } # default to 15 (VS2017) for now
+    $vsMajor = [int]::Parse($vsMajor)
+
+    $vsPaths = new-object System.Collections.Generic.List[System.String]
+    $vsVersions = new-object System.Collections.Generic.List[System.Version]
+
+    # parse vswhere output
     &$vswhere | ForEach-Object {
-      if ($_.StartsWith("installationPath:")) { $vsPath = $_.SubString("installationPath:".Length).Trim() }
-      if ($_.StartsWith("installationVersion:")) { $vsVer = $_.SubString("installationVersion:".Length).Trim() }
+      if ($_.StartsWith("installationPath:")) { $vsPaths.Add($_.SubString("installationPath:".Length).Trim()) }
+      if ($_.StartsWith("installationVersion:")) { $vsVersions.Add([System.Version]::Parse($_.SubString("installationVersion:".Length).Trim())) }
     }
-    if ($vsPath -ne "")
-    {
-      $vsVerParts = $vsVer.Split('.')
-      $vsMajor = [int]::Parse($vsVerParts[0])
-      $vsMinor = [int]::Parse($vsVerParts[1])
-      if ($vsMajor -eq 15) {
-        $msBuild = "$vsPath\MSBuild\$vsMajor.0\Bin"
+
+    # get higest version lower than or equal to vsMajor
+    $vsIx1 = -1
+    $vsIx2 = -1
+    $vsVersion = [System.Version]::Parse("0.0.0.0")
+    $vsVersions | ForEach-Object {
+      $vsIx1 = $vsIx1 + 1
+      if ($_.Major -le $vsMajor -and $_ -gt $vsVersion) {
+        $vsVersion = $_
+        $vsIx2 = $vsIx1
       }
-      elseif ($vsMajor -eq 14) {
-        $msBuild = "c:\Program Files (x86)\MSBuild\$vsMajor\Bin"
+    }
+    if ($vsIx2 -ge 0) {
+      $vsPath = $vsPaths[$vsIx2]
+
+      if ($vsVersion.Major -eq 16) {
+        $msBuild = "$vsPath\MSBuild\$($vsVersion.Major).0\Bin"
+        $toolsVersion = "16.0"
       }
-      else
-      {
-        $msBuild = $null
+      if ($vsVersion.Major -eq 15) {
+        $msBuild = "$vsPath\MSBuild\$($vsVersion.Major).0\Bin"
+        $toolsVersion = "15.0"
+      }
+      elseif ($vsVersion.Major -eq 14) {
+        $msBuild = "c:\Program Files (x86)\MSBuild\$($vsVersion.Major)\Bin"
+        $toolsVersion = "4.0"
       }
     }
 
     if ($msBuild)
     {
-      $toolsVersion = "4.0"
-      if ($vsMajor -eq 15) { $toolsVersion = "15.0" }
-
       $vs = @{
         Path = $vsPath
         Major = $vsMajor
