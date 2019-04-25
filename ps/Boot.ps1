@@ -92,6 +92,7 @@ $ubuild.DefineMethod("Boot",
   else
   {
     $this.BuildVersion = [System.IO.Path]::GetFileName($this.BuildPath).Substring("Umbraco.Build.".Length)
+    Write-Host "Umbraco.Build v$($this.BuildVersion)"
 
     # load the lib
     Add-Type -Path "$($this.BuildPath)\lib\Umbraco.Build.dll"

@@ -28,6 +28,8 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     WithVs = $true
     WithSemver = $true
     WithNode = $true
+    NodeVersion = '10.15.0'
+    WithDocFx = $false
   }
 
   # ensure we have NuGet - not an option really
@@ -158,7 +160,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
   }
 
   # ensure we have node
-  $nodeVersion = '10.15.0'
+  $nodeVersion = $options.NodeVersion
   $node = "$scriptTemp\node-v$nodeVersion-win-x86"
   if ($options.WithNode)
   {
@@ -177,6 +179,33 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     elseif (-not (test-path $node))
     {
       throw "Failed to locate Node."
+    }
+  }
+
+  # ensure we have docfx
+  $docfx = "$scriptTemp\docfx.ready"
+  $docfxExe =""
+  if ($options.WithDocFx)
+  {
+    if (-not $options.Local)
+    {
+      if ((test-path $docfx) -and ((ls $docfx).CreationTime -lt [DateTime]::Now.AddDays(-$options.Cache)))
+      {
+        $this.RemoveFile($docfx)
+      }
+      if (-not (test-path $docfx))
+      {
+        Write-Host "Download DocFx..."
+        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
+        &$nuget install docfx.console @params
+        $dir = ls "$scriptTemp\docfx.console.*" | sort -property Name -descending | select -first 1
+        $docfxExe = "$dir\tools\docfx.exe"
+        cp "$docfxExe" $docfx
+      }
+    }
+    elseif (-not (Test-Path $docfx))
+    {
+      throw "Failed to locate DocFx."
     }
   }
 
@@ -251,6 +280,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
   if ($options.WithVs) { $uenv.VisualStudio = $vs ; $uenv.VsWhere = $vswhere }
   if ($options.WithSemver) { $uenv.Semver = $semver }
   if ($options.WithNode) { $uenv.NodePath = $node }
+  if ($options.WithDocFx) { $uenv.DocFx = $docfxExe }
 
   return $uenv
 })
