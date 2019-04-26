@@ -198,8 +198,11 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
         Write-Host "Download DocFx..."
         $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
         &$nuget install docfx.console @params
-        $dir = ls "$scriptTemp\docfx.console.*" | sort -property Name -descending | select -first 1
-        $docfxExe = "$dir\tools\docfx.exe"
+      }
+      $dir = ls "$scriptTemp\docfx.console.*" | sort -property Name -descending | select -first 1
+      $docfxExe = "$dir\tools\docfx.exe"
+      if (-not (test-path $docfx))
+      {
         cp "$docfxExe" $docfx
       }
     }
