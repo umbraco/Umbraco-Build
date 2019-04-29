@@ -222,7 +222,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     $msBuild = $null
     $toolsVersion = ""
 
-    $vsMajor = if ($option.VsMajor) { $option.VsMajor } else { "15" } # default to 15 (VS2017) for now
+    $vsMajor = if ($option.VsMajor) { $option.VsMajor } else { "16" } # default to 16 (VS2019) for now
     $vsMajor = [int]::Parse($vsMajor)
 
     $vsPaths = new-object System.Collections.Generic.List[System.String]
@@ -249,8 +249,8 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       $vsPath = $vsPaths[$vsIx2]
 
       if ($vsVersion.Major -eq 16) {
-        $msBuild = "$vsPath\MSBuild\$($vsVersion.Major).0\Bin"
-        $toolsVersion = "16.0"
+        $msBuild = "$vsPath\MSBuild\Current\Bin"
+        $toolsVersion = "Current"
       }
       if ($vsVersion.Major -eq 15) {
         $msBuild = "$vsPath\MSBuild\$($vsVersion.Major).0\Bin"
