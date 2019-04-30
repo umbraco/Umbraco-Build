@@ -250,7 +250,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
 
       if ($vsVersion.Major -eq 16) {
         $msBuild = "$vsPath\MSBuild\Current\Bin"
-        $toolsVersion = "Current"
+        $toolsVersion = "16.0"
       }
       if ($vsVersion.Major -eq 15) {
         $msBuild = "$vsPath\MSBuild\$($vsVersion.Major).0\Bin"
