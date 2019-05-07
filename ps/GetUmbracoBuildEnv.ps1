@@ -30,6 +30,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     WithNode = $true
     NodeVersion = '10.15.0'
     WithDocFx = $false
+    VsPreview = $true
   }
 
   # ensure we have NuGet - not an option really
@@ -229,7 +230,9 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     $vsVersions = new-object System.Collections.Generic.List[System.Version]
 
     # parse vswhere output
-    &$vswhere | ForEach-Object {
+    $params = @()
+    if ($options.VsPreview) { $params += "-prerelease" }
+    &$vswhere @params | ForEach-Object {
       if ($_.StartsWith("installationPath:")) { $vsPaths.Add($_.SubString("installationPath:".Length).Trim()) }
       if ($_.StartsWith("installationVersion:")) { $vsVersions.Add([System.Version]::Parse($_.SubString("installationVersion:".Length).Trim())) }
     }
