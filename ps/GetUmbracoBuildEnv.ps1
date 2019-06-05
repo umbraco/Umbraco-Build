@@ -31,6 +31,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     NodeVersion = '10.15.0'
     WithDocFx = $false
     VsPreview = $true
+    VsMajor = $null
   }
 
   # ensure we have NuGet - not an option really
@@ -223,7 +224,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     $msBuild = $null
     $toolsVersion = ""
 
-    $vsMajor = if ($option.VsMajor) { $option.VsMajor } else { "16" } # default to 16 (VS2019) for now
+    $vsMajor = if ($options.VsMajor) { $options.VsMajor } else { "16" } # default to 16 (VS2019) for now
     $vsMajor = [int]::Parse($vsMajor)
 
     $vsPaths = new-object System.Collections.Generic.List[System.String]
