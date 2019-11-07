@@ -36,6 +36,8 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
 
   # ensure we have NuGet - not an option really
   $nuget = "$scriptTemp\nuget.exe"
+  # ensure the correct NuGet-source is used (not the Umbraco one, but the NuGet-one)
+  $nugetsource = "https://api.nuget.org/v3/index.json"
   if (-not $options.Local)
   {
     $source = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
@@ -76,7 +78,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       if (-not (test-path $sevenZip))
       {
         Write-Host "Download 7-Zip..."
-        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
+        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet", "-Source", $nugetsource
         &$nuget install 7-Zip.CommandLine @params
         if (-not $?) { throw "Failed to download 7-Zip." }
         $dir = ls "$scriptTemp\7-Zip.CommandLine.*" | sort -property Name -descending | select -first 1
@@ -106,7 +108,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       if (-not (test-path $vswhere))
       {
         Write-Host "Download VsWhere..."
-        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
+        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet", "-Source", $nugetsource
         &$nuget install vswhere @params
         if (-not $?) { throw "Failed to download VsWhere." }
         $dir = ls "$scriptTemp\vswhere.*" | sort -property Name -descending | select -first 1
@@ -134,7 +136,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       if (-not (test-path $semver))
       {
         Write-Host "Download Semver..."
-        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
+        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet", "-Source", $nugetsource
         &$nuget install semver @params
         $dir = ls "$scriptTemp\semver.*" | sort -property Name -descending | select -first 1
         $file = "$dir\lib\net452\Semver.dll"
@@ -198,7 +200,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       if (-not (test-path $docfx))
       {
         Write-Host "Download DocFx..."
-        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet"
+        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet", "-Source", $nugetsource
         &$nuget install docfx.console @params
       }
       $dir = ls "$scriptTemp\docfx.console.*" | sort -property Name -descending | select -first 1
