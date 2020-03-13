@@ -6,3 +6,4 @@ build.out/
 build.tmp/
 build/temp/
 build/hooks/
+/src/.idea/

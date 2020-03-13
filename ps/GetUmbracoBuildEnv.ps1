@@ -153,7 +153,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
 
     try
     {
-      [Reflection.Assembly]::LoadFile($semver) > $null
+      Add-Type -Path $semver > $null
     }
     catch
     {

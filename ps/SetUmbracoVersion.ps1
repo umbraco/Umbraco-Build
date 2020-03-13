@@ -8,7 +8,7 @@ $ubuild.DefineMethod("SetUmbracoVersion",
 
   try
   {
-    [Reflection.Assembly]::LoadFile($this.BuildEnv.Semver) > $null
+    Add-Type -Path $this.BuildEnv.Semver > $null
   }
   catch
   {
