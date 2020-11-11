@@ -27,7 +27,7 @@
   # ################################################################
 
   # configure
-  $ubuild.ReleaseBranches = @( "master" )
+  $ubuild.ReleaseBranches = @( "main" )
 
   # build
   $buildConfiguration = "Release"
