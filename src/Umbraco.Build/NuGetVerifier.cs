@@ -74,7 +74,7 @@ namespace Umbraco.Build
                     ReadCsProj(csproj, l);
             }
             IEnumerable<Package> p = l.OrderBy(x => x.Id);
-            p = DistinctBy(p, x => x.Id + ":::" + x.Version + ":::" + x.Codition ?? string.Empty +":::");
+            p = DistinctBy(p, x => x.Id + ":::" + x.Version + ":::" + x.Condition ?? string.Empty +":::");
             return p.ToArray();
         }
 
@@ -83,9 +83,9 @@ namespace Umbraco.Build
         public IGrouping<string, Package>[] GetPackageErrors(Package[] pkgs)
         {
 
-            var conditions = pkgs.GroupBy(x => x.Codition);
+            var conditions = pkgs.GroupBy(x => x.Condition);
             
-            var conditionLess = pkgs.Where(x => x.Codition is null).ToArray();
+            var conditionLess = pkgs.Where(x => x.Condition is null).ToArray();
 
             IGrouping<string, Package>[] result = null;
             
@@ -111,7 +111,7 @@ namespace Umbraco.Build
         // returns dependency, package version
         public NuGetError[] GetNuSpecErrors(Package[] pkgs, Dependency[] deps)
         {
-            var xpkgs = pkgs.ToDictionary(x => x.Id + ":::" + x.Codition, x => x.Version);
+            var xpkgs = pkgs.ToDictionary(x => x.Id + ":::" + x.Condition, x => x.Version);
             return deps.Select(dep =>
             {
                 if (!xpkgs.TryGetValue(dep.Id, out var packageVersion)) return null;
@@ -163,7 +163,7 @@ namespace Umbraco.Build
                     {
                         var sversion = package.VersionE ?? package.VersionA;
                         if (!NuGetVersion.TryParse(sversion, out var version)) continue;
-                        packages.Add(new Package { Id = package.Id, Version = version, Project = GetDirectoryName(filename), Codition = itemGroup.Condition});
+                        packages.Add(new Package { Id = package.Id, Version = version, Project = GetDirectoryName(filename), Condition = itemGroup.Condition});
                     }
             }
         }
@@ -215,7 +215,7 @@ namespace Umbraco.Build
             public NuGetVersion Version { get; set; }
             public string Project { get; set; }
 
-            public string Codition{ get; set; }
+            public string Condition{ get; set; }
         }
 
         [XmlType(AnonymousType = true /*, Namespace = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd"*/)]
