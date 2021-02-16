@@ -1,10 +1,22 @@
-
 $ubuild.DefineMethod("GetUmbracoVersion",
 {
   # parse SolutionInfo and retrieve the version string
   $filepath = "$($this.SolutionRoot)\src\SolutionInfo.cs"
-  $text = [System.IO.File]::ReadAllText($filepath)
-  $match = [System.Text.RegularExpressions.Regex]::Matches($text, "AssemblyInformationalVersion\(`"(.+)?`"\)")
+
+  $solutionInfoExists = [System.IO.File]::Exists($filepath)
+
+  if ($solutionInfoExists) 
+  {
+    $text = [System.IO.File]::ReadAllText($filepath)
+    $match = [System.Text.RegularExpressions.Regex]::Matches($text, "AssemblyInformationalVersion\(`"(.+)?`"\)")
+  }
+  else
+  {
+    $filepath = "$($this.SolutionRoot)\src\Directory.Build.props"
+    $text = [System.IO.File]::ReadAllText($filepath)
+    $match = [System.Text.RegularExpressions.Regex]::Matches($text, "<InformationalVersion>(.+)?<\/InformationalVersion>")
+  }
+  
   $version = $match.Groups[1].ToString()
 
   # clear
