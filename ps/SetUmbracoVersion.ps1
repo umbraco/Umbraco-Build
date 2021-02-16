@@ -35,19 +35,49 @@ $ubuild.DefineMethod("SetUmbracoVersion",
   #
   $release = "" + $semver.Major + "." + $semver.Minor + "." + $semver.Patch
 
-  # edit files and set the proper versions and dates
-  Write-Host "Update SolutionInfo.cs"
-  $this.ReplaceFileText("$($this.SolutionRoot)\src\SolutionInfo.cs", `
-    "AssemblyFileVersion\(`".+`"\)", `
-    "AssemblyFileVersion(`"$release`")")
-  $this.ReplaceFileText("$($this.SolutionRoot)\src\SolutionInfo.cs", `
-    "AssemblyInformationalVersion\(`".+`"\)", `
-    "AssemblyInformationalVersion(`"$semver`")")
-  $year = [System.DateTime]::Now.ToString("yyyy")
-  $this.ReplaceFileText("$($this.SolutionRoot)\src\SolutionInfo.cs", `
-    "AssemblyCopyright\(`"Copyright © Umbraco (\d{4})`"\)", `
-    "AssemblyCopyright(`"Copyright © Umbraco $year`")")
+  $filePath = "$($this.SolutionRoot)\src\SolutionInfo.cs"
+  $solutionInfoExists = [System.IO.File]::Exists($filepath)
+  if($solutionInfoExists)
+  {
+    # edit files and set the proper versions and dates
+    Write-Host "Update SolutionInfo.cs"
+    $this.ReplaceFileText($filePath, `
+      "AssemblyFileVersion\(`".+`"\)", `
+      "AssemblyFileVersion(`"$release`")")
+    $this.ReplaceFileText($filePath, `
+      "AssemblyInformationalVersion\(`".+`"\)", `
+      "AssemblyInformationalVersion(`"$semver`")")
+    $year = [System.DateTime]::Now.ToString("yyyy")
+    $this.ReplaceFileText($filePath, `
+      "AssemblyCopyright\(`"Copyright © Umbraco (\d{4})`"\)", `
+      "AssemblyCopyright(`"Copyright © Umbraco $year`")")
+  }else{
+    $filePath = "$($this.SolutionRoot)\src\Directory.Build.props"
 
+    # edit files and set the proper versions and dates
+    Write-Host "Update Directory.Build.props"
+    $this.ReplaceFileText($filePath, `
+      "<Version>(.+)?</Version>", `
+      "<Version>$release</Version>")
+
+    $this.ReplaceFileText($filePath, `
+      "<AssemblyVersion>(.+)?</AssemblyVersion>", `
+      "<AssemblyVersion>$release</AssemblyVersion>")
+
+    $this.ReplaceFileText($filePath, `
+      "<InformationalVersion>(.+)?</InformationalVersion>", `
+      "<InformationalVersion>$semver</InformationalVersion>")
+
+
+    $this.ReplaceFileText($filePath, `
+      "<FileVersion>(.+)?</FileVersion>", `
+      "<FileVersion>$release</FileVersion>")    
+    $year = [System.DateTime]::Now.ToString("yyyy")
+
+    $this.ReplaceFileText($filePath, `
+      "<Copyright>(.+)?</Copyright>", `
+      "<Copyright>Copyright " + [char]0x00A9 + " Umbraco $year</Copyright>")
+  }
   $this.Version = @{
     Semver = $semver
     Release = $release
