@@ -21,6 +21,9 @@ jobs:
 
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/}" >> $GITHUB_ENV
+    
+    - name: Check version is set
+      run: echo Deploying version $VERSION
 
     - name: Setup MSBuild path
       uses: microsoft/setup-msbuild@v1.1
