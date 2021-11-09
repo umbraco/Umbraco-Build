@@ -25,9 +25,3 @@ jobs:
  
     - name: NuGet Pack
       run: nuget pack .\build\nuspec\Umbraco.Build.nuspec -Properties Solution=$pwd
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: UmbracoBuild
-        path: Umbraco.Build*.nupkg
