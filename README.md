@@ -69,3 +69,12 @@ AssemblyInformationalVersion 8.1.2-alpha.12.5557
   not using +5557 because for SemVer it's info only, no comparison
 The build number is an Int32 - cannot use 20170919231025
 should it be a count? number of secs since? since first build of that version?
+
+## Releasing
+
+To release new versions, GitHub actions are used. In the `.github/workflows/release.yml` workflow you can see and configure the steps.
+
+1. Make sure to update `SolutionInfo.cs` with the version you want to release
+2. The release is triggered by pushing a new tag to the repository with the version number in the format `v0.2.17` - this should be the same version number you put in `SolutionInfo.cs` prefixed with a `v`
+3. The release workflow will run and push the latest version to MyGet
+
