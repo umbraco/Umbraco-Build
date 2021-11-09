@@ -35,5 +35,4 @@ jobs:
       run: msbuild .\src\Umbraco.Build\Umbraco.Build.csproj -t:rebuild -verbosity:diag -property:Configuration=Release
  
     - name: NuGet Pack
-      run: nuget pack .\build\nuspec\Umbraco.Build.nuspec -Properties Solution=$pwd /p:Version=$($env:GITHUB_REF -replace "refs/tags/")
-
+      run: nuget pack .\build\nuspec\Umbraco.Build.nuspec -Properties Solution=$pwd
