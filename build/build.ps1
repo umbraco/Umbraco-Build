@@ -18,18 +18,7 @@
     @{ Local = $local; With7Zip = $false; WithNode = $false },
     @{ IsUmbracoBuild = $true })
   if ($ubuild.OnError()) { return }
-  
-  function Get-VersionFromSolutionInfoFile ($path) {
-    try {
-  	  [version] $ver = (Get-Content -Raw $path) -replace '(?s).*\bAssemblyFileVersion\("(.*?)"\).*', '$1'
-    } catch {
-  	  throw
-    }
-    return $ver
-  }
-  
-  $ubuild.BuildVersion = Get-VersionFromSolutionInfoFile("$($ubuild.SolutionRoot)\src\SolutionInfo.cs")
-  
+
   Write-Host "Umbraco.Build Build"
   Write-Host "Umbraco.Build v$($ubuild.BuildVersion)"
 
@@ -39,7 +28,7 @@
 
   # configure
   $ubuild.ReleaseBranches = @( "main" )
-  
+
   # build
   $buildConfiguration = "Release"
   $logfile = "$($ubuild.BuildTemp)\msbuild.umbraco-build.log"
@@ -80,7 +69,6 @@
 
   # package nuget
   Write-Host "Pack"
-  
   &$ubuild.BuildEnv.NuGet Pack "$($ubuild.SolutionRoot)\build\nuspec\Umbraco.Build.nuspec" `
     -Properties Solution="$($ubuild.SolutionRoot)" `
     -Version $ubuild.Version.Semver.ToString() `

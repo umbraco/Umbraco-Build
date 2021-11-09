@@ -72,9 +72,5 @@ should it be a count? number of secs since? since first build of that version?
 
 ## Releasing
 
-To release new versions, GitHub actions are used. In the `.github/workflows/release.yml` workflow you can see and configure the steps.
-
-1. Make sure to update `SolutionInfo.cs` with the version you want to release
-2. The release is triggered by pushing a new tag to the repository with the version number in the format `0.2.17` - this should be the exact same version number you put in `SolutionInfo.cs`
-3. The release workflow will run and push the latest version to MyGet
-
+To release new versions, run `.\build\build.ps1` on your local machine, the version will be taken from `SolutionInfo.cs` (`AssemblyInformationalVersion`) so make sure that's correct before you build. 
+The resulting `nupkg` file will be written to the `build.out` directory. Push it manually to the https://www.myget.org/F/umbracocore/api/v3/index.json feed.
