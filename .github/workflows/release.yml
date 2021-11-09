@@ -11,8 +11,8 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v2
       - name: Get version from tag
+        uses: actions/checkout@v2
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
     - name: Verify commit exists in origin/main
