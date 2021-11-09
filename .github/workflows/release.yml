@@ -14,33 +14,11 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - name: Verify commit exists in origin/main
-      run: |
-        git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
-        git branch --remote --contains | grep origin/feature/automated-deploy      
-
-    - name: Output version to build
-      run: |
-        arrTag=(${GITHUB_REF//\// })
-        VERSION="${arrTag[2]}"
-        VERSION="${VERSION}"      
-        Write-Host Deploying version $VERSION
-
     - name: Setup MSBuild path
       uses: microsoft/setup-msbuild@v1.1
 
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1
     
-    - name: NuGet Restore
-      run: nuget restore .\src\Umbraco.Build.sln
-
-    - name: Build app for release
-      run: msbuild .\src\Umbraco.Build\Umbraco.Build.csproj -t:rebuild -verbosity:diag -property:Configuration=Release
- 
-    - name: NuGet Pack
-      run: |
-        arrTag=(${GITHUB_REF//\// })
-        VERSION="${arrTag[2]}"
-        VERSION="${VERSION}"
-        nuget pack .\build\nuspec\Umbraco.Build.nuspec -Properties Solution=$pwd /p:Version=$VERSION
+    - name: Build the project and output npkg
+      run: .\build\build.ps1
