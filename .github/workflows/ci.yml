@@ -18,7 +18,7 @@ jobs:
       uses: NuGet/setup-nuget@v1
     
     - name: NuGet Restore
-      run nuget restore .\src\Umbraco.Build.sln
+      run: nuget restore .\src\Umbraco.Build.sln
 
     - name: Build app for release
       run: msbuild .\src\Umbraco.Build\Umbraco.Build.csproj -t:rebuild -verbosity:diag -property:Configuration=Release
