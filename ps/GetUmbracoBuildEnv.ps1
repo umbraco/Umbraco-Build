@@ -232,6 +232,8 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     $vsPaths = new-object System.Collections.Generic.List[System.String]
     $vsVersions = new-object System.Collections.Generic.List[System.Version]
 
+    Write-Host "Finding MSbuild.exe"
+    
     # parse vswhere output
     $params = @()
     if ($options.VsPreview) { $params += "-prerelease" }
@@ -252,6 +254,9 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       }
     }
     if ($vsIx2 -ge 0) {
+      
+      Write-Host "Detected VS version " $vsVersion.Major
+      
       $vsPath = $vsPaths[$vsIx2]
 
       if ($vsVersion.Major -gt 16) {
@@ -277,6 +282,8 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
         MsBuild = "$msBuild\MsBuild.exe"
         ToolsVersion = $toolsVersion
       }
+     
+      Write-Host "Using MsBuild.exe in $msBuild\MsBuild.exe"
     }
   }
 

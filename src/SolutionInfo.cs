@@ -16,5 +16,5 @@ using System.Resources;
 [assembly: AssemblyVersion("0.2.11")]
 
 // these are FYI and changed automatically
-[assembly: AssemblyFileVersion("0.2.17")]
-[assembly: AssemblyInformationalVersion("0.2.17-aleph.20211109")]
+[assembly: AssemblyFileVersion("0.2.18")]
+[assembly: AssemblyInformationalVersion("0.2.18")]
