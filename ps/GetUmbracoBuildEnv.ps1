@@ -136,7 +136,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       if (-not (test-path $semver))
       {
         Write-Host "Download Semver..."
-        $params = "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet", "-Source", $nugetsource
+        $params = "-Version", "2.3.0", "-OutputDirectory", $scriptTemp, "-Verbosity", "quiet", "-Source", $nugetsource
         &$nuget install semver @params
         $dir = ls "$scriptTemp\semver.*" | sort -property Name -descending | select -first 1
         $file = "$dir\lib\net452\Semver.dll"
@@ -233,7 +233,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
     $vsVersions = new-object System.Collections.Generic.List[System.Version]
 
     Write-Host "Finding MSbuild.exe"
-    
+
     # parse vswhere output
     $params = @()
     if ($options.VsPreview) { $params += "-prerelease" }
@@ -254,9 +254,9 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
       }
     }
     if ($vsIx2 -ge 0) {
-      
+
       Write-Host "Detected VS version " $vsVersion.Major
-      
+
       $vsPath = $vsPaths[$vsIx2]
 
       if ($vsVersion.Major -gt 16) {
@@ -282,7 +282,7 @@ $ubuild.DefineMethod("GetUmbracoBuildEnv",
         MsBuild = "$msBuild\MsBuild.exe"
         ToolsVersion = $toolsVersion
       }
-     
+
       Write-Host "Using MsBuild.exe in $msBuild\MsBuild.exe"
     }
   }
